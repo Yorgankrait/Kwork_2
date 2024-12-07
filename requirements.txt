@@ -1,0 +1,14 @@
+django
+
+djangorestframework
+markdown
+django-filter
+
+celery[redis]
+
+psycopg2-binary
+django-rest-swagger
+pyyaml
+pillow
+django-cors-headers
+django-extensions

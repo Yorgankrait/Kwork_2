@@ -1,0 +1,311 @@
+@media (min-width: 1240px) {
+    .wrapper {
+      padding: 0 40px;
+    }
+
+    .content {
+        padding: 40px 0;
+        max-width: 1240px;
+        width: 100%;
+        margin: 0 auto;
+    }
+
+    .header-text {
+        font-size: 16px;
+        margin-top: 25px;
+        line-height: 22px;
+    }
+
+    .logo {
+        width: 285px;
+    }
+
+    .window-img {
+        width: 80px;
+        height: 80px;
+    }
+
+    .estimate {
+        font-size: 35px;
+        margin: 60px 0 20px 0;
+    }
+
+    .old-price {
+        margin: 30px 0 15px 0;
+        font-size: 22px;
+    }
+
+    .new-price {
+        font-size: 35px;
+        line-height: 24px;
+    }
+
+    .alert-message {
+        font-size: 16px;
+        margin-top: 20px;
+    }
+
+    .link-external-img {
+        width: 18px;
+    }
+
+    .goods {
+        margin-top: 90px;
+    }
+
+
+    .additional-goods-container,
+    .services-container {
+        max-width: 605px;
+        width: 100%;
+        margin-top: 80px;
+    }
+
+    .table-additional-th {
+        padding-bottom: 13px;
+    }
+
+
+    .goods-top-wrapper {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 30px;
+    }
+
+    /* .goods-item {
+        width: 100%;
+    } */
+
+    .goods-page-title {
+        font-size: 35px;
+    }
+
+    .aperture-text {
+        margin-bottom: 15px;
+        font-size: 16px;
+    }
+
+    .aperture-container {
+        padding: 30px;
+        border-radius: 30px;
+    }
+
+    .goods-title {
+        font-size: 12px;
+    }
+
+    .goods-name {
+        font-size: 25px;
+    }
+
+    .goods-name:last-child {
+        font-size: 20px;
+    }
+
+    .advantages {
+        padding: 8px 12px;
+    }
+
+    .advantages:first-child {
+        margin-right: 10px;
+    }
+
+    .advantages-container {
+        margin: 10px 0 8px 0;
+    }
+
+    .advantages-text {
+        font-size: 12px;
+    }
+
+    .aperture-list {
+        display: none;
+    }
+
+    .notstandart-set {
+        margin-top: 60px;
+    }
+
+    .aperture-table-price {
+        font-weight: 700;
+        border-bottom: 0;
+    }
+
+    .aperture-table-td {
+        width: 53%;
+    }
+
+    .table-price {
+       text-align: right;
+    }
+
+    .table-price-align {
+        text-align: left;
+    }
+
+    .aperture-table {
+        display: inline-table;
+        font-size: 16px;
+    }
+
+    .table-services {
+        font-size: 16px;
+    }
+
+    .table-services-title {
+        padding-bottom: 13px;
+    }
+
+    .table-services-th {
+        width: 28%;
+        text-align: left;
+        padding-bottom: 13px;
+    }
+
+    .table-services-td {
+        text-align: left;
+    }
+
+
+    .aperture-list-block {
+        font-size: 14px;
+    }
+
+    .goods-title-bold {
+        font-size: 25px;
+        line-height: 30px;
+    }
+
+    .aperture-text-bold {
+        font-size: 35px;
+        line-height: 40px;
+        margin-bottom: 25px;
+    }
+
+    .table-additional-goods {
+        width: 100%;
+        font-size: 16px;
+    }
+
+    .table-price-right {
+        text-align: right;
+    }
+
+    .table-price-left {
+        text-align: left;
+    }
+
+    .text-block {
+        margin-top: 80px;
+        margin-bottom: 80px;
+    }
+
+    .text-block>p {
+        font-size: 18px;
+        line-height: 22px;
+    }
+
+    .text-block-sign {
+        font-size: 16px;
+    }
+
+    .rate-us {
+        padding: 60px 50px;
+    }
+
+    .rate-us-button:last-child {
+        margin-top: 0;
+    }
+
+    .rate-us-buttons-container {
+        display: flex;
+        gap: 30px;
+        justify-content: center;
+        margin-top: 50px;
+    }
+
+    .rate-us-button {
+        max-width: 250px;
+    }
+
+    .rate-us-title {
+        text-align: center;
+        font-size: 35px;
+    }
+
+    .rate-us-button-text {
+        font-size: 16px;
+    }
+
+    .get-estimate-button {
+        margin: 50px 0 80px 0;
+        font-size: 16px;
+        max-width: 285px;
+        width: 100%;
+    }
+
+    .questions-block-title {
+        font-size: 35px;
+        padding-bottom: 15px;
+    }
+
+    .questions-block-question {
+        margin: 20px 0;
+        font-size: 20px;
+    }
+
+    .footer {
+        max-width: 1440px;
+        padding: 50px 100px;
+        margin: 0 auto;
+        display: block;
+    }
+
+    .footer-logo {
+        margin-right: 0;
+    }
+
+    .footer-tablet  {
+        display: none;
+    }
+
+    .footer-container {
+       display: flex;
+    }
+
+    .footer-adress {
+       max-width: 350px;
+       width: 100%;
+       margin: 0 70px 0 135px;
+    }
+
+    .footer-adress-juristic,
+    .footer-contacts-title {
+        font-size: 20px;
+        margin-top: 0;
+    }
+
+    .footer-ogrn {
+        font-size: 16px;
+    }
+    
+
+    .footer-adress-text {
+        font-size: 16px;
+        line-height: 20px;
+    }
+
+    .footer-contacts-item {
+        font-size: 16px;
+        margin-bottom: 15px;
+    }
+
+    .footer-copyright {
+        font-size: 12px;
+    }
+
+    table {
+        font-size: 16px;
+    }
+
+}

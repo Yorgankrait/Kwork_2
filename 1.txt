@@ -1,0 +1,7 @@
+sudo docker run -it --rm -p 80:80 --name certbot \
+         -v "/etc/letsencrypt:/etc/letsencrypt" \
+         -v "/var/lib/letsencrypt:/var/lib/letsencrypt" \
+         certbot/certbot certonly --standalone -d offer.okonti.ru
+
+python -m venv .venv
+.venv\Scripts\Activate.ps1
