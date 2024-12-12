@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.validators import FileExtensionValidator
 
 
 class Office(models.Model):
@@ -86,6 +87,13 @@ class Order(models.Model):
     products = models.ManyToManyField(Product, related_name='orders', verbose_name='Изделия')
     additionals = models.ManyToManyField(Additional, related_name='orders', verbose_name='Дополнительные')
     services = models.ManyToManyField(Service, related_name='orders', verbose_name='Услуги')
+    order_pdf = models.FileField(
+        upload_to='media/pdf/',
+        blank=True,
+        null=True,
+        verbose_name='PDF сметы',
+        validators=[FileExtensionValidator(allowed_extensions=['pdf'])]
+    )
 
     class Meta:
         verbose_name = 'Смета | Заказ'
@@ -93,3 +101,16 @@ class Order(models.Model):
 
     def __str__(self):
         return str(self.number)
+
+class OrderRating(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='ratings', verbose_name='Смета / Заказ')
+    user_id = models.UUIDField(verbose_name='Уникальный идентификатор пользователя')
+    liked = models.BooleanField(verbose_name='Оценка: Нрав./Не нрав.')
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата-Время создания')
+
+    class Meta:
+        verbose_name = 'Оценка - Сметы | Заказа'
+        verbose_name_plural = 'Оценки - Сметы | Заказа'
+
+    def __str__(self):
+        return f'{self.order.number} | {"Нравится" if self.liked else "Не нравится"}'

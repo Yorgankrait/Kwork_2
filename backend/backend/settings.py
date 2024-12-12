@@ -1,14 +1,15 @@
-
 import os
 
-
 from pathlib import Path
+from dotenv import load_dotenv
 
+
+load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-)3e+o=#-w7#0h_-a$t+4p7t8(x)9-g_+3-jdmda3tc5pmrk#q2'
-API_KEY = '447c0d33-75f4-81d9-a0d3-43e5ce98cfa0'
+SECRET_KEY = os.environ.get("SECRET_KEY")
+API_KEY = os.environ.get("API_KEY")
 
 
 DEBUG = os.environ.get("DEBUG", True)
@@ -35,7 +36,7 @@ INSTALLED_APPS = [
     'rest_framework_swagger',
     'corsheaders',
     'django_extensions',
-    'smeta',
+    'smeta.apps.SmetaConfig',
 ]
 
 
@@ -118,55 +119,37 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'ru-RU'
 
-
 TIME_ZONE = 'Europe/Moscow'
-
 
 USE_I18N = True
 
-
 USE_L10N = True
-
 
 USE_TZ = True
 
 
-STATIC_URL = 'static/'
-#STATIC_URL = "/static/"
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-
-
+STATIC_URL = '/static/'  # URL для статики в браузере
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # Путь для собранной статики (используется при командe collectstatic)
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static')
     # "/var/www/static/",
 ]
 
-print(STATIC_ROOT)
+MEDIA_URL = "/upload/" #как url данных, которые требуется предоставить.
+MEDIA_ROOT = os.path.join(BASE_DIR, 'upload') #будет использоваться для управления сохраненными данными
 
-#STATICFILES_DIRS = [
-#    ("static", "../static"),
-#]
-
-
-#STATICFILES_DIRS = [
-#    os.path.join(BASE_DIR, 'static'),#
-#]
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
 
 # celery broker and result
 CELERY_BROKER_URL = "redis://localhost:6379/0"
 CELERY_RESULT_BACKEND = "redis://localhost:6379/0"
-
+CELERY_ACCEPT_CONTENT = ['json']
 
 CSRF_TRUSTED_ORIGINS = [
     'https://offer.okonti.ru',
 ]
 
-
-MEDIA_URL = "/upload/" #как url данных, которые требуется предоставить.
-MEDIA_ROOT = os.path.join(BASE_DIR, 'upload') #будет использоваться для управления сохраненными данными
-
+SITE_URL = "http://127.0.0.1:8000"
 
 CORS_ALLOW_ALL_ORIGINS = True

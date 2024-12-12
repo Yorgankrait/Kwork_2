@@ -1,6 +1,7 @@
+from django.utils.html import format_html
 from django.contrib import admin
 
-from .models import Office, Manager, Option, Product, Additional, Service, Order
+from .models import Office, Manager, Option, Product, Additional, Service, Order, OrderRating
 
 
 class ProductInline(admin.TabularInline):
@@ -44,6 +45,7 @@ class ServiceAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Order, OrderAdmin)
+admin.site.register(OrderRating)
 admin.site.register(Office, OfficeAdmin)
 admin.site.register(Manager, ManagerAdmin)
 admin.site.register(Option)

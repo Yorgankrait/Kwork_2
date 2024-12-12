@@ -7,31 +7,15 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
-    <link rel="stylesheet" href="{% static 'css/media600.css' %}" />
-    <link rel="stylesheet" href="{% static 'css/media1240.css' %}" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=thumb_up" />
     <link
       href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
       rel="stylesheet"
     />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
       rel="stylesheet"
     />
-
-    <link rel="apple-touch-icon" sizes="180x180" href="https://okonti.ru/upload/resize_cache/webp/local/templates/okonti/assets/favicon/apple-touch-icon.webp" />
-	<link rel="icon" type="image/png" sizes="32x32" href="https://okonti.ru/upload/resize_cache/webp/local/templates/okonti/assets/favicon/favicon-32x32.webp" />
-	<link rel="icon" type="image/png" sizes="16x16" href="https://okonti.ru/upload/resize_cache/webp/local/templates/okonti/assets/favicon/favicon-16x16.webp" />
-	<!-- <link rel="manifest" href="https://okonti.ru/local/templates/okonti/assets/favicon/site.webmanifest" /> -->
-	<!-- <link rel="shortcut icon" href="https://okonti.ru/local/templates/okonti/assets/favicon/favicon.ico" /> -->
-
     <title>{{ order.number }}</title>
-
   </head>
   <body>
     <div class="wrapper">
@@ -39,7 +23,7 @@
         <header>
           <div class="header-logo">
             <div>
-              <img src="{% static '/img/header-logo.svg' %}" alt="logo" class="logo" />
+              <img src="{{ header_logo_url }}" alt="logo" class="logo" />
             </div>
             <div class="header-text">
               Офис продаж: {{ order.office.name }} - {{ order.office.address }} </br> Менеджер:
@@ -61,10 +45,10 @@
             <div>
               <div class="goods-page-title">Изделия</div>
               <div class="goods-top-wrapper">
-                <!-- |slice:"1:4"                 -->
+                <!-- |slice:"1:4" -->
                      {% for product in products %}
                         <div class="goods-item">
-                            <div class="aperture-text">Проём {{ product.identifier }}</div>
+                            <div class="aperture-text">Проём {{product.identifier}}</div>
                             <div class="aperture-container">
                               <div class="top-goods-container">
                                   <div>
@@ -85,42 +69,21 @@
 
                                   <div class="picture-block">
                                     <img
-                                    alt=""
+                                    alt="window"
                                     class="window-img"
                                     src="data:image/png;base64, {{product.image}} "
                                     />
-                                    <img
-                                    src="{% static 'img/expand.svg' %}"
-                                      alt=""
-                                      class="expand-img"
-                                      onclick="toggleImage()"
-                                    />
-                                    <div class="modal" id="imageModal">
-                                      <span class="close" onclick="closeImage()">&times;</span>
-                                      <img
-                                        alt=""
-                                        class="expand-img-full"
-                                        src="data:image/png;base64, {{product.image}}"
-                                      />
-                                    </div>
                                   </div>
-
                             </div>
 
                             <div class="advantages-container">
                               {% for option in product.options.all %}
                                       <div class="advantages">
                                         <div class="advantages-wrapper">
-                                          <img
-                                            src="{% static 'img/check-mark.svg' %}"
-                                            alt=""
-                                            class="check-mark-img"
-                                          />
                                           <div class="advantages-text">{{option.name}}</div>
                                         </div>
                                       </div>
-
-                                  {% endfor %}
+                              {% endfor %}
                             </div>
 
                             <!-- table 600px -->
@@ -148,10 +111,6 @@
                                 <td>{{ product.quantity }}</td>
                               </tr>
 
-                              <!-- <tr>
-                                <td>Ручки:</td>
-                                <td>Минималист Дельта</td>
-                              </tr> -->
                               <tr class="table-price-block">
                                 <td class="table-total">Стоимость:</td>
                                 <td class="aperture-table-price">0 ₽</td>
@@ -190,7 +149,6 @@
                               <div class="aperture-list-params">0 ₽</div>
                             </div>
                           </div>
-
 
                           </div>
                         </div>
@@ -259,86 +217,17 @@
             </tbody>
           </table>
         </div>
+
        </div>
 
             <!--  -->
           </div>
         <!-- rate us -->
-        <div class="rate-us">
-          <div class="rate-us-wrapper">
-            <div class="rate-us-title">
-              Пожалуйста, оцените наше предложение
-            </div>
-            <div class="rate-us-buttons-container">
-              <button class="rate-us-button {% if user_rating.liked %}active{% endif %}" id="like-button">
-                <img
-                  src="{% static 'img/like-dislike.svg' %}"
-                  alt="like"
-                />
-                <span class="rate-us-button-text">Нравится</span>
-              </button>
-
-              <button class="rate-us-button {% if not user_rating.liked %}active{% endif %}" id="dislike-button">
-                <img
-                  src="{% static 'img/like-dislike.svg' %}"
-                  alt="like"
-                  class="rate-us-img"
-                />
-                <span class="rate-us-button-text">Не нравится</span>
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <a href="{% if order.order_pdf %}{{ order.order_pdf.url }}{% endif %}" class="get-estimate-button" download>
-          <img src="{% static 'img/download.svg' %}" alt="like" class="download" />
-          <span class="rate-us-button-text">Получить смету в PDF</span>
-        </a>
-
-        <div class="questions-block">
-          <div class="questions-block-title">Часто задаваемые вопросы</div>
-          <div class="questions-block-question">
-            Как правильно выбрать окно?
-          </div>
-          <div class="questions-block-question">
-            Почему заказывать у частников рискованно?
-          </div>
-          <div class="questions-block-question">
-            От чего зависит качество монтажа окон?
-          </div>
-          <div class="questions-block-question">
-            Как понять, какое окно теплое?
-          </div>
-          <div class="questions-block-question">
-            Почему сроки доставки и установки могут быть нарушены?
-          </div>
-          <div class="questions-block-question">
-            Будет ли грязно во время монтажа?
-          </div>
-          <div class="questions-block-question">
-            Как пользоваться щелевым проветриванием и МДО?
-          </div>
-          <div class="questions-block-question">
-            Что делать, если окно открылось сразу в двух положениях?
-          </div>
-          <div class="questions-block-question">
-            Как установить москитную сетку?
-          </div>
-          <div class="questions-block-question">
-            Что можно сделать с окном для детской безопасности?
-          </div>
-          <div class="questions-block-question">
-            Чем отличается взломостойкая фурнитура от обычной?
-          </div>
-          <div class="questions-block-question">
-            Для чего нужен роликовый приподниматель «Микролифт»?
-          </div>
-        </div>
       </div>
-      <div class="footer">
+      <div class="footer" style="margin: 50px">
         <div class="footer-container">
           <div class="footer-logo">
-            <img src="{% static 'img/footer-logo.svg' %}" alt="logo" class="logo" />
+            <img src="{{ footer_logo_url }}" alt="logo" class="logo" />
           </div>
           <div class="footer-adress">
             <div class="footer-adress-juristic">Юридический адрес</div>
@@ -366,7 +255,7 @@
       </div>
       <div class="footer-tablet">
         <div class="footer-logo">
-          <img src="{% static 'img/footer-logo.svg' %}" alt="logo" class="logo" />
+          <img src="{{ header_logo_url }}" alt="logo" class="logo" />
         </div>
         <div class="footer-container">
           <div class="footer-adress">
@@ -394,93 +283,5 @@
         </div>
       </div>
     </div>
-    <script>
-
-      function toggleImage() {
-        const modal = document.getElementById('imageModal');
-
-        if (modal.style.display === 'flex') {
-          modal.style.opacity = '0';
-          setTimeout(() => {
-            modal.style.display = 'none';
-          }, 500);
-        } else {
-          modal.style.display = 'flex';
-          setTimeout(() => {
-            modal.style.opacity = '1';
-          }, 10);
-        }
-      }
-
-      window.onclick = function(event) {
-        const modal = document.getElementById('imageModal');
-        if (event.target === modal) {
-          toggleImage();
-        }
-      };
-
-      function openImage() {
-        const modal = document.getElementById('imageModal');
-        modal.style.display = 'flex';
-        modal.style.opacity = '1';
-        console.log('ffff')
-      }
-
-      function closeImage() {
-        const modal = document.getElementById('imageModal');
-        modal.style.opacity = '0';
-        setTimeout(() => {
-          modal.style.display = 'none';
-        }, 500);
-      }
-
-      function updateHeader() {
-        const header = document.querySelector('.count');
-
-        if (window.innerWidth > 600) {
-          header.textContent = 'Количество';
-        } else {
-          header.textContent = 'Кол-во';
-        }
-      }
-
-      updateHeader();
-
-      window.addEventListener('resize', updateHeader);
-
-      const likeButton = document.getElementById('like-button');
-      const dislikeButton = document.getElementById('dislike-button');
-
-      function rateOrder(orderNumber, liked) {
-          console.log(liked, 'liked')
-          fetch(`/api/rate-smeta/${orderNumber}/`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'X-CSRFToken': '{{ csrf_token }}'
-            },
-            body: JSON.stringify({ "liked": liked })
-          })
-          .then(response => response.json())
-          .catch(error => console.error('Ошибка:', error));
-      }
-
-      function setActive(button) {
-        likeButton.classList.remove('active');
-        dislikeButton.classList.remove('active');
-
-        button.classList.add('active');
-      }
-
-      likeButton.addEventListener('click', function() {
-        setActive(likeButton);
-        rateOrder('{{ order.number }}', true);
-      });
-
-      dislikeButton.addEventListener('click', function() {
-        setActive(dislikeButton);
-        rateOrder('{{ order.number }}', false);
-      });
-    </script>
   </body>
 </html>

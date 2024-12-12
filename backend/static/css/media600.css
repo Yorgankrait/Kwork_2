@@ -1,264 +1,260 @@
 @media (min-width: 600px) {
-    .content {
-        padding: 20px 30px;
-    }
-
-    .header-text {
-        font-size: 12px;
-        margin-top: 30px;
-    }
-
-    .logo {
-        width: 150px;
-    }
-
-    .window-img {
-        width: 80px;
-        height: 80px;
-    }
-
-    .estimate {
-        font-size: 30px;
-        margin-top: 33px;
-    }
-
-    .old-price {
-        margin: 15px 0 5px 0;
-        font-size: 16px;
-    }
-
-    .new-price {
-        font-size: 30px;
-    }
-
-    .alert-message {
-        font-size: 14px;
-        max-width: 100%;
-    }
-
-    .goods-item {
-        margin-top: 30px;
-    }
-
-    .goods-page-title {
-        font-size: 25px;
-    }
-
-    .aperture-text {
-        margin-bottom: 15px;
-        font-size: 16px;
-    }
-
-    .aperture-container {
-        padding: 30px;
-        width: 600px;
-    }
-
-    .goods-title {
-        font-size: 12px;
-    }
-
-    .goods-name {
-        font-size: 25px;
-    }
-
-    .goods-name:last-child {
-        font-size: 20px;
-    }
-
-    .advantages {
-        padding: 10px 12px;
-    }
-
-    .advantages:first-child {
-        margin-right: 10px;
-    }
-
-    .advantages-container {
-        margin: 15px 0 30px 0;
-    }
-
-    .advantages-text {
-        font-size: 12px;
-    }
-
-    .aperture-list {
-        display: none;
-    }
-
-    .aperture-table-price {
-        font-weight: 700;
-    }
-
-    .table-price {
-        text-align: right;
-    }
-
-    .table-price-align {
-        text-align: left;
-    }
-
-    .aperture-table {
-        display: inline-table;
-        font-size: 14px;
-    }
-
-    .table-services {
-        font-size: 14px;
-    }
-
-    .aperture-list-block {
-        font-size: 14px;
-    }
-
-    .goods-title-bold {
-        font-size: 25px;
-    }
-
-    .aperture-text-bold {
-        font-size: 25px;
-    }
-
-    .table-additional-goods {
-        width: 100%;
-        font-size: 16px;
-    }
-
-    .table-services-title {
-        padding-bottom: 8px;
-    }
-
-    .table-additional-th:last-child {
-        width: 22%;
-    }
-
-    .table-services-th {
-        width: 22%;
-        text-align: left;
-    }
-
-    .table-price-left {
-        text-align: left;
-    }
-
-    .table-services {
-        font-size: 16px;
-    }
-
-    .table-services-td {
-        text-align: left;
-    }
-
-    .table-price-right {
-        text-align: right;
-    }
-
-    .text-block {
-        margin-top: 50px;
-    }
-
-    .text-block>p {
-        font-size: 16px;
-        line-height: 22px;
-    }
-
-    .text-block-sign {
-        font-size: 16px;
-    }
-
-    .rate-us {
-        padding: 50px;
-    }
-
-    .rate-us-button {
-        max-width: 200px;
-        width: 100%;
-    }
-
-    .rate-us-button:last-child {
-        margin-top: 0;
-    }
-
-    .rate-us-buttons-container {
-        display: flex;
-        justify-content: center;
-        gap: 30px;
-    }
-
-    .rate-us-title {
-        text-align: center;
-        font-size: 25px;
-    }
-
-    .rate-us-button-text {
-        font-size: 16px;
-    }
-
-    .get-estimate-button {
-        margin: 30px 0 50px 0;
-        font-size: 16px;
-        max-width: 260px;
-        width: 100%;
-    }
-
-    .questions-block-title {
-        font-size: 25px;
-        margin-bottom: 5px;
-    }
-
-    /* footer */
-    .footer {
-        display: none;
-        padding: 30px;
-    }
-
-    .footer-tablet {
-        background: #003595;
-        color: #fff;
-        padding: 20px;
-        display: flex;
-    }
-
-    .footer-logo {
-        margin-right: 60px;
-    }
-
-    .footer-adress-juristic,
-    .footer-contacts-title {
-        font-size: 16px;
-        margin-top: 0;
-    }
-
-    .footer-adress-text {
-        max-width: 329px;
-        width: 100%;
-        font-size: 12px;
-        margin-bottom: 20px;
-    }
-
-    .footer-contacts-item {
-        font-size: 12px;
-    }
-
-    .footer-copyright {
-        font-size: 10px;
-    }
-
-    .table-wrapper {
-        padding: 30px;
-        max-width: 600px;
-        width: 100%;
-    }
-
-    table {
-        font-size: 16px;
-    }
-
-  th  {
-   padding-top: 0 !important;
+  .content {
+    padding: 20px 30px;
   }
 
-    
+  .header-text {
+    font-size: 12px;
+    margin-top: 30px;
+  }
 
+  .logo {
+    width: 150px;
+  }
 
+  .window-img {
+    width: 80px;
+    height: 80px;
+  }
+
+  .estimate {
+    font-size: 30px;
+    margin-top: 33px;
+  }
+
+  .old-price {
+    margin: 15px 0 5px 0;
+    font-size: 16px;
+  }
+
+  .new-price {
+    font-size: 30px;
+  }
+
+  .alert-message {
+    font-size: 14px;
+    max-width: 100%;
+  }
+
+  .goods-item {
+    margin-top: 30px;
+  }
+
+  .goods-page-title {
+    font-size: 25px;
+  }
+
+  .aperture-text {
+    margin-bottom: 15px;
+    font-size: 16px;
+  }
+
+  .aperture-container {
+    padding: 30px;
+    width: 600px;
+  }
+
+  .goods-title {
+    font-size: 12px;
+  }
+
+  .goods-name {
+    font-size: 25px;
+  }
+
+  .goods-name:last-child {
+    font-size: 20px;
+  }
+
+  .advantages {
+    padding: 10px 12px;
+  }
+
+  .advantages:first-child {
+    margin-right: 10px;
+  }
+
+  .advantages-container {
+    margin: 15px 0 30px 0;
+  }
+
+  .advantages-text {
+    font-size: 12px;
+  }
+
+  .aperture-list {
+    display: none;
+  }
+
+  .aperture-table-price {
+    font-weight: 700;
+  }
+
+  .table-price {
+    text-align: right;
+  }
+
+  .table-price-align {
+    text-align: left;
+  }
+
+  .aperture-table {
+    display: inline-table;
+    font-size: 14px;
+  }
+
+  .table-services {
+    font-size: 14px;
+  }
+
+  .aperture-list-block {
+    font-size: 14px;
+  }
+
+  .goods-title-bold {
+    font-size: 25px;
+  }
+
+  .aperture-text-bold {
+    font-size: 25px;
+  }
+
+  .table-additional-goods {
+    width: 100%;
+    font-size: 16px;
+  }
+
+  .table-services-title {
+    padding-bottom: 8px;
+  }
+
+  .table-additional-th:last-child {
+    width: 22%;
+  }
+
+  .table-services-th {
+    width: 22%;
+    text-align: left;
+  }
+
+  .table-price-left {
+    text-align: left;
+  }
+
+  .table-services {
+    font-size: 16px;
+  }
+
+  .table-services-td {
+    text-align: left;
+  }
+
+  .table-price-right {
+    text-align: right;
+  }
+
+  .text-block {
+    margin-top: 50px;
+  }
+
+  .text-block > p {
+    font-size: 16px;
+    line-height: 22px;
+  }
+
+  .text-block-sign {
+    font-size: 16px;
+  }
+
+  .rate-us {
+    padding: 50px;
+  }
+
+  .rate-us-button {
+    max-width: 200px;
+    width: 100%;
+  }
+
+  .rate-us-button:last-child {
+    margin-top: 0;
+  }
+
+  .rate-us-buttons-container {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+  }
+
+  .rate-us-title {
+    text-align: center;
+    font-size: 25px;
+  }
+
+  .rate-us-button-text {
+    font-size: 16px;
+  }
+
+  .get-estimate-button {
+    margin: 30px 0 50px 0;
+    font-size: 16px;
+    max-width: 260px;
+    width: 100%;
+  }
+
+  .questions-block-title {
+    font-size: 25px;
+    margin-bottom: 5px;
+  }
+
+  /* footer */
+  .footer {
+    display: none;
+    padding: 30px;
+  }
+
+  .footer-tablet {
+    background: #003595;
+    color: #fff;
+    padding: 20px;
+    display: flex;
+  }
+
+  .footer-logo {
+    margin-right: 60px;
+  }
+
+  .footer-adress-juristic,
+  .footer-contacts-title {
+    font-size: 16px;
+    margin-top: 0;
+  }
+
+  .footer-adress-text {
+    max-width: 329px;
+    width: 100%;
+    font-size: 12px;
+    margin-bottom: 20px;
+  }
+
+  .footer-contacts-item {
+    font-size: 12px;
+  }
+
+  .footer-copyright {
+    font-size: 10px;
+  }
+
+  .table-wrapper {
+    padding: 30px;
+    max-width: 600px;
+    width: 100%;
+  }
+
+  table {
+    font-size: 16px;
+  }
+
+  th {
+    padding-top: 0 !important;
+  }
 }
