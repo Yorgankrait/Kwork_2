@@ -127,6 +127,9 @@ USE_L10N = True
 
 USE_TZ = True
 
+CSRF_COOKIE_SECURE = True
+X_FRAME_OPTIONS = 'DENY'
+
 
 STATIC_URL = '/static/'  # URL для статики в браузере
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # Путь для собранной статики (используется при командe collectstatic)
