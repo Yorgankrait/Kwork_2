@@ -1,5 +1,5 @@
 import os
-
+import requests
 from pathlib import Path
 from dotenv import load_dotenv
 
@@ -137,10 +137,11 @@ STATICFILES_FINDERS = [
 ]
 
 STATIC_URL = '/static/'  # URL для статики в браузере
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # Путь для собранной статики (используется при командe collectstatic)
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')  # Путь для собранной статики (используется при командe collectstatic)
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static')
+    #os.path.join(BASE_DIR, 'static')
     # "/var/www/static/",
+    BASE_DIR / "static",
 ]
 
 MEDIA_URL = "/upload/" #как url данных, которые требуется предоставить.
@@ -158,6 +159,7 @@ CSRF_TRUSTED_ORIGINS = [
     'https://offer.okonti.ru',
 ]
 
-SITE_URL = "http://127.0.0.1:8000"
+#SITE_URL = "http://127.0.0.1:8000"
+SITE_URL = "https://offer.okonti.ru"
 
 CORS_ALLOW_ALL_ORIGINS = True
