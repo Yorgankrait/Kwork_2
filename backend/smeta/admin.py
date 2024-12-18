@@ -1,4 +1,3 @@
-from django.utils.html import format_html
 from django.contrib import admin
 
 from .models import Office, Manager, Option, Product, Additional, Service, Order, OrderRating
@@ -19,7 +18,7 @@ class ServiceInline(admin.TabularInline):
     fields = ('service',)
 
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ('number', 'office', 'manager', 'old_price', 'new_price')
+    list_display = ('uuid', 'number', 'office', 'manager', 'old_price', 'new_price')
     search_fields = ('number', 'office__name', 'manager__name')
     inlines = [ProductInline, AdditionalInline, ServiceInline]
 

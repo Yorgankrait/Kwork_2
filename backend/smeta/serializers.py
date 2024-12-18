@@ -95,8 +95,7 @@ class OrderSerializer(ModelSerializer):
         # Сначала создаем все продукты
         for product_data in products_data:
             options_data = product_data.pop('options')  # Извлекаем опции для продукта
-            product = self._create_product(product_data)  # Создаем объект продукта
-            products.append(product)  # Добавляем продукт в список
+            products.append(Product(**product_data))  # Добавляем продукт в список
 
         # Массовое создание продуктов
         Product.objects.bulk_create(products)
@@ -108,9 +107,6 @@ class OrderSerializer(ModelSerializer):
 
             # Привязываем продукт к заказу
             order.products.add(product)
-
-    def _create_product(self, product_data):
-        return Product(**product_data)
 
     def _add_options_to_product(self, product, options_data):
         options = []

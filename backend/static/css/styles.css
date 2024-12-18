@@ -361,29 +361,19 @@ th {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #808080;
+  background-color: #135ee4 !important;
   padding: 13px 0 13px 0;
   border-radius: 5px;
 }
 
-.rate-us-button:hover {
-  background-color: #135ee4;
-}
-
-/* Состояние кнопки при нажатии */
-.rate-us-button.active {
-  background-color: #135ee4;
+.image-rate-us {
+  width: 25px !important;
+  height: 25px !important;
 }
 
 .rate-us-button:last-child {
-  background-color: #808080;
+  background-color: #f9326d !important;
   margin-top: 15px;
-}
-.rate-us-button:last-child:hover {
-  background-color: #f9326d;
-}
-.rate-us-button:last-child.active {
-  background-color: #f9326d;
 }
 
 .rate-us-button-text {

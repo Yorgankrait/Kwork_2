@@ -4,9 +4,11 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 
+
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', include('smeta.urls'), name='smeta')
+    path('', include('smeta.urls'), name='smeta'),
+   # re_path(r'^$', schema_view)
 ]
 
 if settings.DEBUG:

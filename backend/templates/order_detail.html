@@ -25,13 +25,12 @@
     />
 
     <link rel="apple-touch-icon" sizes="180x180" href="https://okonti.ru/upload/resize_cache/webp/local/templates/okonti/assets/favicon/apple-touch-icon.webp" />
-	<link rel="icon" type="image/png" sizes="32x32" href="https://okonti.ru/upload/resize_cache/webp/local/templates/okonti/assets/favicon/favicon-32x32.webp" />
-	<link rel="icon" type="image/png" sizes="16x16" href="https://okonti.ru/upload/resize_cache/webp/local/templates/okonti/assets/favicon/favicon-16x16.webp" />
-	<!-- <link rel="manifest" href="https://okonti.ru/local/templates/okonti/assets/favicon/site.webmanifest" /> -->
-	<!-- <link rel="shortcut icon" href="https://okonti.ru/local/templates/okonti/assets/favicon/favicon.ico" /> -->
+    <link rel="icon" type="image/png" sizes="32x32" href="https://okonti.ru/upload/resize_cache/webp/local/templates/okonti/assets/favicon/favicon-32x32.webp" />
+    <link rel="icon" type="image/png" sizes="16x16" href="https://okonti.ru/upload/resize_cache/webp/local/templates/okonti/assets/favicon/favicon-16x16.webp" />
+    <!-- <link rel="manifest" href="https://okonti.ru/local/templates/okonti/assets/favicon/site.webmanifest" /> -->
+    <!-- <link rel="shortcut icon" href="https://okonti.ru/local/templates/okonti/assets/favicon/favicon.ico" /> -->
 
     <title>{{ order.number }}</title>
-
   </head>
   <body>
     <div class="wrapper">
@@ -104,23 +103,21 @@
                                       />
                                     </div>
                                   </div>
-
                             </div>
 
                             <div class="advantages-container">
                               {% for option in product.options.all %}
-                                      <div class="advantages">
-                                        <div class="advantages-wrapper">
-                                          <img
-                                            src="{% static 'img/check-mark.svg' %}"
-                                            alt=""
-                                            class="check-mark-img"
-                                          />
-                                          <div class="advantages-text">{{option.name}}</div>
-                                        </div>
-                                      </div>
-
-                                  {% endfor %}
+                                <div class="advantages">
+                                  <div class="advantages-wrapper">
+                                    <img
+                                      src="{% static 'img/check-mark.svg' %}"
+                                      alt=""
+                                      class="check-mark-img"
+                                    />
+                                    <div class="advantages-text">{{option.name}}</div>
+                                  </div>
+                                </div>
+                              {% endfor %}
                             </div>
 
                             <!-- table 600px -->
@@ -148,49 +145,12 @@
                                 <td>{{ product.quantity }}</td>
                               </tr>
 
-                              <!-- <tr>
-                                <td>Ручки:</td>
-                                <td>Минималист Дельта</td>
-                              </tr> -->
                               <tr class="table-price-block">
                                 <td class="table-total">Стоимость:</td>
-                                <td class="aperture-table-price">0 ₽</td>
+                                <td class="aperture-table-price">{{ product.cost|default:0 }} ₽</td>
                               </tr>
                             </tbody>
                           </table>
-
-                          <div class="aperture-list">
-                            <div class="aperture-list-block">
-                              <div class="aperture-list-title">Габариты проёма:</div>
-                              <div class="aperture-list-params">{{ product.width }}×{{ product.height }}</div>
-                            </div>
-
-                            <div class="aperture-list-block">
-                              <div class="aperture-list-title">Цвет основания::</div>
-                              <div class="aperture-list-params">{{ product.base_color }}</div>
-                            </div>
-
-                            <div class="aperture-list-block">
-                              <div class="aperture-list-title">Цвет внутренний:</div>
-                              <div class="aperture-list-params">{{ product.inner_color }}</div>
-                            </div>
-
-                            <div class="aperture-list-block">
-                              <div class="aperture-list-title">Цвет внешний:</div>
-                              <div class="aperture-list-params">{{ product.outer_color }}</div>
-                            </div>
-
-                            <div class="aperture-list-block">
-                              <div class="aperture-list-title">Количество:</div>
-                              <div class="aperture-list-params">{{ product.quantity }} шт.</div>
-                            </div>
-
-                            <div class="aperture-list-block">
-                              <div class="aperture-list-title">Стоимость:</div>
-                              <div class="aperture-list-params">0 ₽</div>
-                            </div>
-                          </div>
-
 
                           </div>
                         </div>
@@ -227,7 +187,6 @@
           </tbody>
         </table>
       </div>
-
       </div>
 
       <!--  -->
@@ -270,70 +229,35 @@
               Пожалуйста, оцените наше предложение
             </div>
             <div class="rate-us-buttons-container">
-              <button class="rate-us-button {% if user_rating.liked %}active{% endif %}" id="like-button">
-                <img
-                  src="{% static 'img/like-dislike.svg' %}"
-                  alt="like"
-                />
+              <button class="rate-us-button" id="like-button"
+                      data-order-uuid="{{ order.uuid }}"
+                      data-like-img="{% static 'img/like-dislike-filled.png' %}"
+                      data-dislike-img="{% static 'img/like-dislike.png' %}">
+                <img src="{% if order_rating.liked %}{% static 'img/like-dislike-filled.png' %}{% else %}{% static 'img/like-dislike.png' %}{% endif %}"
+                     style="width:25px" alt="like"/>
                 <span class="rate-us-button-text">Нравится</span>
               </button>
 
-              <button class="rate-us-button {% if not user_rating.liked %}active{% endif %}" id="dislike-button">
-                <img
-                  src="{% static 'img/like-dislike.svg' %}"
-                  alt="like"
-                  class="rate-us-img"
-                />
+              <button class="rate-us-button" id="dislike-button"
+                      data-order-uuid="{{ order.uuid }}"
+                      data-like-img="{% static 'img/like-dislike.png' %}"
+                      data-dislike-img="{% static 'img/like-dislike-filled.png' %}">
+                <img src="{% if not order_rating.liked %}{% static 'img/like-dislike-filled.png' %}{% else %}{% static 'img/like-dislike.png' %}{% endif %}"
+                     alt="like" style="width:25px" class="rate-us-img"/>
                 <span class="rate-us-button-text">Не нравится</span>
               </button>
             </div>
           </div>
         </div>
 
-        <a href="{% if order.order_pdf %}{{ order.order_pdf.url }}{% endif %}" class="get-estimate-button" download>
-          <img src="{% static 'img/download.svg' %}" alt="like" class="download" />
-          <span class="rate-us-button-text">Получить смету в PDF</span>
-        </a>
+        {% if order.order_pdf %}
+            <a href="{{ order.order_pdf.url }}" class="get-estimate-button" download>
+                <img src="{% static 'img/download.svg' %}" alt="like" class="download" />
+                <span class="rate-us-button-text">Получить смету в PDF</span>
+            </a>
+        {% endif %}
 
-        <div class="questions-block">
-          <div class="questions-block-title">Часто задаваемые вопросы</div>
-          <div class="questions-block-question">
-            Как правильно выбрать окно?
-          </div>
-          <div class="questions-block-question">
-            Почему заказывать у частников рискованно?
-          </div>
-          <div class="questions-block-question">
-            От чего зависит качество монтажа окон?
-          </div>
-          <div class="questions-block-question">
-            Как понять, какое окно теплое?
-          </div>
-          <div class="questions-block-question">
-            Почему сроки доставки и установки могут быть нарушены?
-          </div>
-          <div class="questions-block-question">
-            Будет ли грязно во время монтажа?
-          </div>
-          <div class="questions-block-question">
-            Как пользоваться щелевым проветриванием и МДО?
-          </div>
-          <div class="questions-block-question">
-            Что делать, если окно открылось сразу в двух положениях?
-          </div>
-          <div class="questions-block-question">
-            Как установить москитную сетку?
-          </div>
-          <div class="questions-block-question">
-            Что можно сделать с окном для детской безопасности?
-          </div>
-          <div class="questions-block-question">
-            Чем отличается взломостойкая фурнитура от обычной?
-          </div>
-          <div class="questions-block-question">
-            Для чего нужен роликовый приподниматель «Микролифт»?
-          </div>
-        </div>
+        {% include 'components/faq.html' %}
       </div>
       <div class="footer">
         <div class="footer-container">
@@ -394,92 +318,36 @@
         </div>
       </div>
     </div>
+
+    <script src="{% static 'js/script.js' %}"></script>
     <script>
-
-      function toggleImage() {
-        const modal = document.getElementById('imageModal');
-
-        if (modal.style.display === 'flex') {
-          modal.style.opacity = '0';
-          setTimeout(() => {
-            modal.style.display = 'none';
-          }, 500);
-        } else {
-          modal.style.display = 'flex';
-          setTimeout(() => {
-            modal.style.opacity = '1';
-          }, 10);
-        }
-      }
-
-      window.onclick = function(event) {
-        const modal = document.getElementById('imageModal');
-        if (event.target === modal) {
-          toggleImage();
-        }
-      };
-
-      function openImage() {
-        const modal = document.getElementById('imageModal');
-        modal.style.display = 'flex';
-        modal.style.opacity = '1';
-        console.log('ffff')
-      }
-
-      function closeImage() {
-        const modal = document.getElementById('imageModal');
-        modal.style.opacity = '0';
-        setTimeout(() => {
-          modal.style.display = 'none';
-        }, 500);
-      }
-
-      function updateHeader() {
-        const header = document.querySelector('.count');
-
-        if (window.innerWidth > 600) {
-          header.textContent = 'Количество';
-        } else {
-          header.textContent = 'Кол-во';
-        }
-      }
-
-      updateHeader();
-
-      window.addEventListener('resize', updateHeader);
-
-      const likeButton = document.getElementById('like-button');
-      const dislikeButton = document.getElementById('dislike-button');
-
-      function rateOrder(orderNumber, liked) {
-          console.log(liked, 'liked')
-          fetch(`/api/rate-smeta/${orderNumber}/`, {
+      // Функция для отправки данных оценки на сервер
+      function rateOrder(orderUUID, liked) {
+          fetch(`/rate-smeta/${orderUUID}/`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
               'X-CSRFToken': '{{ csrf_token }}'
             },
+            // Тело запроса - данные для отправки (статус лайка)
             body: JSON.stringify({ "liked": liked })
           })
           .then(response => response.json())
           .catch(error => console.error('Ошибка:', error));
       }
 
-      function setActive(button) {
-        likeButton.classList.remove('active');
-        dislikeButton.classList.remove('active');
+      document.getElementById('like-button').addEventListener('click', function() {
+        rateOrder('{{ order.uuid }}', true);
 
-        button.classList.add('active');
-      }
-
-      likeButton.addEventListener('click', function() {
-        setActive(likeButton);
-        rateOrder('{{ order.number }}', true);
+        document.getElementById('like-button').querySelector('img').src = "{% static 'img/like-dislike-filled.png' %}";
+        document.getElementById('dislike-button').querySelector('img').src = "{% static 'img/like-dislike.png' %}";
       });
 
-      dislikeButton.addEventListener('click', function() {
-        setActive(dislikeButton);
-        rateOrder('{{ order.number }}', false);
+      document.getElementById('dislike-button').addEventListener('click', function() {
+        rateOrder('{{ order.uuid }}', false);
+
+        document.getElementById('like-button').querySelector('img').src = "{% static 'img/like-dislike.png' %}";
+        document.getElementById('dislike-button').querySelector('img').src = "{% static 'img/like-dislike-filled.png' %}";
       });
     </script>
   </body>

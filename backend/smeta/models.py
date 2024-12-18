@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.validators import FileExtensionValidator
+import uuid
 
 
 class Office(models.Model):
@@ -47,6 +48,7 @@ class Product(models.Model):
     options = models.ManyToManyField(Option, related_name='products', verbose_name='Опции')
     quantity = models.PositiveIntegerField(verbose_name='Количество')
     image = models.TextField(verbose_name='Изображение')  # base64 image storage
+    cost = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Стоимость', default=0)
 
     class Meta:
         verbose_name = 'Изделие'
@@ -79,6 +81,7 @@ class Service(models.Model):
         return str(self.name)
 
 class Order(models.Model):
+    uuid = models.UUIDField(default=uuid.uuid4, unique=True, verbose_name='Уникальный UUID')
     number = models.CharField(max_length=50, verbose_name='Номер', unique=True)
     office = models.ForeignKey(Office, on_delete=models.CASCADE, related_name='order', verbose_name='Офис')
     manager = models.ForeignKey(Manager, on_delete=models.CASCADE, related_name='order', verbose_name='Менеджер')

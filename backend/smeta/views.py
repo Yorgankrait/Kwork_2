@@ -1,7 +1,8 @@
 import json
 
 from django.shortcuts import render, get_object_or_404
-from django.http import JsonResponse
+from django.http import JsonResponse, Http404
+from django.conf import settings
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -20,7 +21,9 @@ class SmetaCreateAPIView(APIView):
             return Response({'ошибка': 'Поле "Данные" является обязательным'}, status=status.HTTP_400_BAD_REQUEST)
 
         if 'Документ' not in request.data or not request.data['Документ']:
-            return Response({'ошибка': 'Поле "Документ" является обязательным'}, status=status.HTTP_400_BAD_REQUEST)
+            document_missing = True  # Флаг, что документа нет
+        else:
+            document_missing = False  # Документ присутствует
 
         # Получаем данные и преобразовываем ключи на английский
         data = json.loads(request.data['Данные'])
@@ -31,19 +34,26 @@ class SmetaCreateAPIView(APIView):
             order = serializer.save()
 
             # Получаем PDF файл и ставим задачу в очередь для сохранения PDF
-            pdf_file = request.FILES.get('Документ')
-            save_pdf_to_order.delay(order.id, pdf_file.read(), pdf_file.name)
+            if not document_missing:
+                pdf_file = request.FILES.get('Документ')
+                save_pdf_to_order.delay(order.id, pdf_file.read(), pdf_file.name)
 
-            return Response(f'Смета номер: {order.number} успешно создана', status=status.HTTP_201_CREATED)
+            return Response(f'{settings.SITE_URL}/smeta/{order.uuid}', status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-def smeta_details(request, number):
+def smeta_details(request, uuid):
     """ Возвращает страницу сметы по хэшу """
-    order = get_object_or_404(Order, number=number)
+    try:
+        # Попытка получить объект заказа по UUID
+        order = get_object_or_404(Order, uuid=uuid)
+    except Http404:
+        # Если заказ не найден, возвращаем ошибку 404
+        return render(request, 'error.html', {'error_message': 'Заказ не найден.'})
+
     # Создаем или получаем ID юзера чтобы привязать оценку
     user_id = get_or_create_user_id(request)
 
-    user_rating = OrderRating.objects.filter(order=order, user_id=user_id).first()
+    order_rating = OrderRating.objects.filter(order=order, user_id=user_id).first()
 
     # Расчёт стоимости всех доп. изделий
     total_additionals_cost = sum([additional.cost for additional in order.additionals.all()])
@@ -59,15 +69,15 @@ def smeta_details(request, number):
         'services': order.services.all(),
         'total_additionals_cost': total_additionals_cost,
         'total_services_cost': total_services_cost,
-        'user_rating': user_rating
+        'order_rating': order_rating
     }
 
     return render(request, 'order_detail.html', context)
 
 
-def rate_smeta(request, number):
+def rate_smeta(request, uuid):
     """ Обрабатывает оценку заказа """
-    order = get_object_or_404(Order, number=number)
+    order = get_object_or_404(Order, uuid=uuid)
 
     if request.method == 'POST':
         # Декодируем JSON из тела запроса
