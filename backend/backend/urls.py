@@ -12,6 +12,3 @@ urlpatterns = [
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-    print(settings.STATIC_URL)
-    print(settings.STATICFILES_DIRS)
-    print(settings.STATIC_ROOT)

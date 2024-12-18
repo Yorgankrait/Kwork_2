@@ -1,17 +1,21 @@
 from celery import shared_task
-from .services import generate_and_write_pdf
-from django.core.exceptions import ValidationError
-from django.conf import settings
+from django.core.files.base import ContentFile
 
 
 @shared_task
-def generate_pdf_task(smeta_id):
-    from .models import Order  # Импортировать модель внутри функции для избежания циклических импортов
+def save_pdf_to_order(order_id, file_data, file_name):
+    """
+    Задача для сохранения PDF файла в модель Order.
+    :param order_id: ID заказа.
+    :param file_data: Содержимое файла в байтах.
+    :param file_name: Имя файла.
+    """
+    from .models import Order  # Импортируем здесь, чтобы избежать циклических импортов
+
     try:
-        smeta = Order.objects.get(id=smeta_id)
-        generate_and_write_pdf(settings.SITE_URL, smeta)
-        return f"PDF успешно создан для сметы {smeta.number}"
+        order = Order.objects.get(id=order_id)
+        order.order_pdf.save(file_name, ContentFile(file_data))
+        order.save()
+        return f"PDF файл успешно сохранен для заказа {order_id}"
     except Order.DoesNotExist:
-        raise ValidationError("Смета не найдена")
-    except Exception as e:
-        raise ValidationError(f"Ошибка при создании PDF: {str(e)}")
+        return f"Заказ с ID {order_id} не найден"

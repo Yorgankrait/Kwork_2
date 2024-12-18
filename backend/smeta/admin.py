@@ -23,6 +23,38 @@ class OrderAdmin(admin.ModelAdmin):
     search_fields = ('number', 'office__name', 'manager__name')
     inlines = [ProductInline, AdditionalInline, ServiceInline]
 
+    def delete_model(self, request, obj):
+        # Удаляем связанные объекты ManyToMany
+        obj.products.all().delete()
+        obj.additionals.all().delete()
+        obj.services.all().delete()
+
+        # Удаляем менеджера и офис, если они не используются в других заказах
+        if not Order.objects.filter(manager=obj.manager).exists():
+            obj.manager.delete()
+
+        if not Order.objects.filter(office=obj.office).exists():
+            obj.office.delete()
+        # Удаляем сам объект
+        super().delete_model(request, obj)
+
+    def delete_queryset(self, request, queryset):
+        for obj in queryset:
+            # Удаляем связанные объекты ManyToMany
+            obj.products.all().delete()
+            obj.additionals.all().delete()
+            obj.services.all().delete()
+
+            # Удаляем менеджера и офис, если они не используются в других заказах
+            if not Order.objects.filter(manager=obj.manager).exclude(pk=obj.pk).exists():
+                obj.manager.delete()
+
+            if not Order.objects.filter(office=obj.office).exclude(pk=obj.pk).exists():
+                obj.office.delete()
+
+        # Удаляем выбранные объекты
+        super().delete_queryset(request, queryset)
+
 class OfficeAdmin(admin.ModelAdmin):
     list_display = ('name', 'address')
     search_fields = ('name', 'address')

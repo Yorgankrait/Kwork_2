@@ -130,6 +130,11 @@ USE_TZ = True
 CSRF_COOKIE_SECURE = True
 X_FRAME_OPTIONS = 'DENY'
 
+STATICFILES_FINDERS = [
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'django.contrib.staticfiles.finders.DefaultStorageFinder',
+]
 
 STATIC_URL = '/static/'  # URL для статики в браузере
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # Путь для собранной статики (используется при командe collectstatic)

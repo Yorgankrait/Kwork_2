@@ -46,10 +46,10 @@ class Product(models.Model):
     handles = models.CharField(max_length=255, verbose_name='Ручки')
     options = models.ManyToManyField(Option, related_name='products', verbose_name='Опции')
     quantity = models.PositiveIntegerField(verbose_name='Количество')
-    image = models.TextField(verbose_name='Изображение')  # Assuming base64 image storage
+    image = models.TextField(verbose_name='Изображение')  # base64 image storage
 
     class Meta:
-        verbose_name = 'Издение'
+        verbose_name = 'Изделие'
         verbose_name_plural = 'Изделия'
 
     def __str__(self):
@@ -61,8 +61,8 @@ class Additional(models.Model):
     cost = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Стоимость')
 
     class Meta:
-        verbose_name = 'Дополнительный'
-        verbose_name_plural = 'Дополнительные'
+        verbose_name = 'Доп. Изделие'
+        verbose_name_plural = 'Доп. Изделия'
 
     def __str__(self):
         return str(self.name)
