@@ -44,10 +44,10 @@ class Product(models.Model):
     base_color = models.CharField(max_length=255, verbose_name='Цвет основания')
     inner_color = models.CharField(max_length=255, verbose_name='Цвет внутренний')
     outer_color = models.CharField(max_length=255, verbose_name='Цвет внешний')
-    handles = models.CharField(max_length=255, verbose_name='Ручки')
+    handles = models.CharField(max_length=255, verbose_name='Ручки', null=True, blank=True)
     options = models.ManyToManyField(Option, related_name='products', verbose_name='Опции')
     quantity = models.PositiveIntegerField(verbose_name='Количество')
-    image = models.TextField(verbose_name='Изображение')  # base64 image storage
+    image = models.TextField(verbose_name='Изображение') # base64 image storage
     cost = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Стоимость', default=0)
 
     class Meta:
@@ -82,14 +82,14 @@ class Service(models.Model):
 
 class Order(models.Model):
     uuid = models.UUIDField(default=uuid.uuid4, unique=True, verbose_name='Уникальный UUID')
-    number = models.CharField(max_length=50, verbose_name='Номер', unique=True)
+    number = models.CharField(max_length=50, verbose_name='Номер')
     office = models.ForeignKey(Office, on_delete=models.CASCADE, related_name='order', verbose_name='Офис')
     manager = models.ForeignKey(Manager, on_delete=models.CASCADE, related_name='order', verbose_name='Менеджер')
     old_price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Цена старая')
     new_price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Цена новая')
     products = models.ManyToManyField(Product, related_name='orders', verbose_name='Изделия')
-    additionals = models.ManyToManyField(Additional, related_name='orders', verbose_name='Дополнительные')
-    services = models.ManyToManyField(Service, related_name='orders', verbose_name='Услуги')
+    additionals = models.ManyToManyField(Additional, related_name='orders', verbose_name='Дополнительные', blank=True)
+    services = models.ManyToManyField(Service, related_name='orders', verbose_name='Услуги', blank=True)
     order_pdf = models.FileField(
         upload_to='media/pdf/',
         blank=True,
