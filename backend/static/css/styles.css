@@ -57,12 +57,16 @@ button {
 /* main */
 
 .window-img {
-  width: 80px;
-  height: 80px;
+  width: 74px;
+  height: 71px;
+  background: red;
+  left: 8px;
+  top: 8px;
+  position: absolute;
 }
 
 .estimate {
-  margin-top: 30px;
+  margin-top: 25px;
   font-family: Montserrat;
   font-size: 20px;
   font-style: normal;
@@ -117,6 +121,7 @@ button {
 
 .goods-text {
   display: flex;
+  width: 180px;
 }
 
 .goods-text > img {
@@ -156,6 +161,7 @@ button {
 .goods-title {
   color: #222222;
   font-size: 12px;
+  margin-bottom: 1px;
 }
 
 .goods-title,
@@ -164,32 +170,33 @@ button {
 }
 
 .goods-name {
-  font-size: 20px;
+  font-size: 25px;
   font-weight: 700;
   margin-right: 5px;
 }
 
-.goods-name:last-child {
+.goods-param {
   font-size: 16px;
   font-weight: 700;
 }
 
 .picture-block {
   position: relative;
-  padding: 8px 8px 5px 10px;
+  width: 90px;
+  height: 90px;
   border-radius: 10px;
   border: 1px solid #222222;
 }
 
 .expand-img {
   position: absolute;
-  right: 10px;
-  bottom: 10px;
+  right: 5px;
+  bottom: 5px;
   cursor: pointer;
 }
 
 .advantages-container {
-  margin: 15px 0 0px 0;
+  margin: 15px 0px 0px 0px;
 }
 
 .advantages-text {
@@ -350,6 +357,7 @@ th {
   font-weight: 700;
   line-height: 24px;
   font-family: Montserrat;
+  text-align: center;
 }
 
 .rate-us-buttons-container {
@@ -361,7 +369,7 @@ th {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #135ee4 !important;
+  background-color: #135ee4;
   padding: 13px 0 13px 0;
   border-radius: 5px;
 }
@@ -372,7 +380,7 @@ th {
 }
 
 .rate-us-button:last-child {
-  background-color: #f9326d !important;
+  background-color: #f9326d;
   margin-top: 15px;
 }
 
@@ -410,6 +418,7 @@ th {
   font-family: Montserrat;
   color: #222222;
   font-weight: 700;
+  padding-bottom: 10px;
 }
 
 .questions-block-question {
@@ -422,7 +431,7 @@ th {
 }
 
 .questions-block-question:last-child {
-  margin: 15px 0 50px 0;
+  margin: 15px 0 85px 0;
 }
 
 /* footer */
@@ -431,6 +440,9 @@ th {
   background: #003595;
   color: #fff;
   padding: 20px;
+  position: absolute;
+  left: 0;
+  width: 100%;
 }
 
 .footer-tablet {
@@ -492,7 +504,7 @@ th {
   border-radius: 24px;
   border: 1px solid var(--B5BBC2, #b5bbc2);
   overflow: hidden;
-  padding: 20px;
+  padding: 12px 20px 20px 20px;
 }
 
 table {
@@ -503,8 +515,9 @@ table {
 
 td,
 th {
-  padding: 12px 8px 12px 0;
+  padding: 13px 8px 13px 0;
   text-align: left;
+  line-height: 20px;
 }
 
 td {
@@ -514,7 +527,10 @@ td {
 
 .table-1-col-1,
 .table-2-col-1 {
-  width: 40%;
+  width: 60%;
+}
+
+.table-1-col-1 {
 }
 
 .table-1-col-2 {
@@ -532,6 +548,9 @@ td {
   font-weight: 700;
   border-bottom: none;
   padding-bottom: 0;
+}
+
+.table-total {
 }
 
 /* Expand */

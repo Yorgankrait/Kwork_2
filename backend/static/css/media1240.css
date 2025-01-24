@@ -21,12 +21,12 @@
   }
 
   .window-img {
-    width: 80px;
-    height: 80px;
+    width: 74px;
+    height: 71px;
   }
 
   .estimate {
-    font-size: 35px;
+    font-size: 30px;
     margin: 60px 0 20px 0;
   }
 
@@ -252,7 +252,6 @@
   }
 
   .footer {
-    max-width: 1440px;
     padding: 50px 100px;
     margin: 0 auto;
     display: block;

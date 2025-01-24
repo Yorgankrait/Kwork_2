@@ -41,8 +41,8 @@
               <img src="{% static '/img/header-logo.svg' %}" alt="logo" class="logo" />
             </div>
             <div class="header-text">
-              Офис продаж: {{ order.office.name }} - {{ order.office.address }} </br> Менеджер:
-              {{ order.manager.name }} - {{ order.manager.phone }}
+              Офис продаж: {{ order.office.name }} - {{ order.office.addresss }} </br> Менеджер:
+              {{ order.manager.name }}, {{ order.manager.phone|format_phone }}
             </div>
           </div>
         </header>
@@ -68,17 +68,21 @@
                               <div class="top-goods-container">
                                   <div>
                                     <div class="top-goods-item">
-                                      <div class="goods-title">Оконная система</div>
+                                      {% if product.system != "Нестандартная комплектация" %}
+                                        <div class="goods-title">Оконная система</div>
+                                      {% endif %}
                                       <div class="goods-text">
                                         <div class="goods-name">{{ product.system }}</div>
                                       </div>
                                     </div>
 
                                     <div>
-                                      <div class="goods-title">Оконная серия</div>
-                                      <div class="goods-text">
-                                        <div class="goods-name">{{ product.series }}</div>
-                                      </div>
+                                      {% if product.series %}
+                                        <div class="goods-title">Оконная серия</div>
+                                        <div class="goods-text">
+                                          <div class="goods-param">{{ product.series }}</div>
+                                        </div>
+                                      {% endif %}
                                     </div>
                                   </div>
 
@@ -104,7 +108,6 @@
                                     </div>
                                   </div>
                             </div>
-
                             <div class="advantages-container">
                               {% for option in product.options.all %}
                                 <div class="advantages">
@@ -122,11 +125,16 @@
 
                             <!-- table 600px -->
 
-                          <table class="aperture-table">
+                          <table
+                            class="aperture-table"
+                            style="{% if not product.options.all %}margin-top: 80px;{% endif %}">
                             <tbody>
                               <tr>
-                                <td class="aperture-table-td">Габариты проёма:</td>
-                                <td>{{ product.width }}×{{ product.height }}</td>
+                                <td class="aperture-table-td"
+                                  style="border-top: none!important;">
+                                    Габариты проёма:
+                                </td>
+                                <td style="border-top: none!important;">{{ product.width }}×{{ product.height }}</td>
                               </tr>
                               <tr>
                                 <td class="aperture-table-td">Цвет основания:</td>
@@ -151,7 +159,32 @@
                               </tr>
                             </tbody>
                           </table>
-
+                          <div class="aperture-list"
+                            style="{% if not product.options.all %}margin-top: 60px;{% endif %}">
+                            <div class="aperture-list-block">
+                              <div class="aperture-list-title">Габариты проёма:</div>
+                              <div class="aperture-list-params">{{ product.width }}×{{ product.height }}</div>
+                            </div>
+                            <div class="aperture-list-block">
+                              <div class="aperture-list-title">Цвет основания:</div>
+                              <div class="aperture-list-params">{{ product.base_color }}</div>
+                            </div>
+                            <div class="aperture-list-block">
+                              <div class="aperture-list-title">Цвет внутренний:</div>
+                              <div class="aperture-list-params">{{ product.inner_color }}</div>
+                            </div>
+                            <div class="aperture-list-block">
+                              <div class="aperture-list-title">Цвет внешний:</div>
+                              <div class="aperture-list-params">{{ product.outer_color }}</div>
+                            </div>
+                            <div class="aperture-list-block">
+                              <div class="aperture-list-title">Количество:</div>
+                              <div class="aperture-list-params">{{ product.quantity }} шт.</div>
+                            </div>
+                            <div class="aperture-list-block">
+                              <div class="aperture-list-title">Стоимость:</div>
+                              <div class="aperture-list-params">0 ₽</div>
+                            </div>
                           </div>
                         </div>
                     {% empty %}
@@ -180,7 +213,7 @@
             </tr>
             {% endfor %}
             <tr>
-              <td class="table-1-col-1 table-total">Итого:</td>
+              <td class="table-1-col-1 table-total" style="height: 40px;">Итого:</td>
               <td class="table-1-col-2 table-td-empty"></td>
               <td class="table-1-col-3 table-total-price">{{ total_additionals_cost |currency }}</td>
             </tr>
@@ -211,7 +244,7 @@
                 </tr>
               {% endfor %}
               <tr>
-                <td class="table-2-col-1 table-total">Итого</td>
+                <td class="table-2-col-1 table-total" style="height: 40px;">Итого</td>
                 <td class="table-td-empty"></td>
                 <td class="table-2-col-3 table-total-price">{{ total_services_cost |currency }}</td>
               </tr>
@@ -219,9 +252,7 @@
           </table>
         </div>
        </div>
-
-            <!--  -->
-          </div>
+        <!--  -->
         <!-- rate us -->
         <div class="rate-us">
           <div class="rate-us-wrapper">
@@ -229,21 +260,27 @@
               Пожалуйста, оцените наше предложение
             </div>
             <div class="rate-us-buttons-container">
-              <button class="rate-us-button" id="like-button"
-                      data-order-uuid="{{ order.uuid }}"
-                      data-like-img="{% static 'img/like-dislike-filled.png' %}"
-                      data-dislike-img="{% static 'img/like-dislike.png' %}">
+              <button
+                class="rate-us-button"
+                id="like-button"
+                onclick="rateOrder('{{ order.uuid }}', true)"
+                data-like-img="{% static 'img/like-dislike-filled.png' %}"
+                data-dislike-img="{% static 'img/like-dislike.png' %}"
+              >
                 <img src="{% if order_rating.liked %}{% static 'img/like-dislike-filled.png' %}{% else %}{% static 'img/like-dislike.png' %}{% endif %}"
                      style="width:25px" alt="like"/>
                 <span class="rate-us-button-text">Нравится</span>
               </button>
 
-              <button class="rate-us-button" id="dislike-button"
-                      data-order-uuid="{{ order.uuid }}"
-                      data-like-img="{% static 'img/like-dislike.png' %}"
-                      data-dislike-img="{% static 'img/like-dislike-filled.png' %}">
-                <img src="{% if not order_rating.liked %}{% static 'img/like-dislike-filled.png' %}{% else %}{% static 'img/like-dislike.png' %}{% endif %}"
-                     alt="like" style="width:25px" class="rate-us-img"/>
+              <button
+                class="rate-us-button"
+                id="dislike-button"
+                onclick="rateOrder('{{ order.uuid }}', false)"
+                data-like-img="{% static 'img/like-dislike-filled.png' %}"
+                data-dislike-img="{% static 'img/like-dislike.png' %}"
+              >
+                <img src="{% if order_rating.liked is none %}{% static 'img/like-dislike.png' %}{% elif not order_rating.liked %}{% static 'img/like-dislike-filled.png' %}{% else %}{% static 'img/like-dislike.png' %}{% endif %}"
+                  style="width:25px" alt="dislike" class="rate-us-img"/>
                 <span class="rate-us-button-text">Не нравится</span>
               </button>
             </div>
@@ -280,7 +317,7 @@
               <a href="mailto:info@okonti.ru" >info@okonti.ru</a>
             </div>
             <div class="footer-contacts-item">
-              <a href="https://okonti.ru/">okonti.ru</a>
+              <a href="https://okonti.ru/" style="font-weight: 700;">okonti.ru</a>
             </div>
           </div>
         </div>
@@ -322,30 +359,36 @@
     <script src="{% static 'js/script.js' %}"></script>
     <script>
       // Функция для отправки данных оценки на сервер
-      function rateOrder(orderUUID, liked) {
-          fetch(`/rate-smeta/${orderUUID}/`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'X-CSRFToken': '{{ csrf_token }}'
-            },
-            // Тело запроса - данные для отправки (статус лайка)
-            body: JSON.stringify({ "liked": liked })
-          })
-          .then(response => response.json())
-          .catch(error => console.error('Ошибка:', error));
+      const isValidUUID = (uuid) => {
+        const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[4][0-9a-f]{3}-[89a-f][0-9a-f]{3}-[0-9a-f]{12}$/i;
+        return uuidRegex.test(uuid);
+      };
+
+      const rateOrder = (orderUUID, liked) => {
+        if (!isValidUUID(orderUUID)) {
+          return;  // Прерываем выполнение функции, если UUID невалидный
+        }
+
+        fetch(`/api/rate-smeta/${orderUUID}/`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': '{{ csrf_token }}'
+          },
+          body: JSON.stringify({ "liked": liked })
+        })
+        .then(response => response.json())
+        .then(data => {
+        })
+        .catch(error => console.error('Ошибка:', error));
       }
 
       document.getElementById('like-button').addEventListener('click', function() {
-        rateOrder('{{ order.uuid }}', true);
-
         document.getElementById('like-button').querySelector('img').src = "{% static 'img/like-dislike-filled.png' %}";
         document.getElementById('dislike-button').querySelector('img').src = "{% static 'img/like-dislike.png' %}";
       });
 
       document.getElementById('dislike-button').addEventListener('click', function() {
-        rateOrder('{{ order.uuid }}', false);
-
         document.getElementById('like-button').querySelector('img').src = "{% static 'img/like-dislike.png' %}";
         document.getElementById('dislike-button').querySelector('img').src = "{% static 'img/like-dislike-filled.png' %}";
       });

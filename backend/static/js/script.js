@@ -50,29 +50,3 @@ function updateHeader() {
 updateHeader();
 
 window.addEventListener('resize', updateHeader);
-
-const likeButton = document.getElementById('like-button');
-const dislikeButton = document.getElementById('dislike-button');
-
-function updateButtonImages() {
-  const likeImage = likeButton.querySelector('img');
-  const dislikeImage = dislikeButton.querySelector('img');
-
-  if (likeButton.classList.contains('active')) {
-    likeImage.src = likeButton.dataset.likeImg;   // Получаем путь из data-like-img
-    dislikeImage.src = dislikeButton.dataset.dislikeImg; // Получаем путь из data-dislike-img
-  } else {
-    likeImage.src = dislikeButton.dataset.dislikeImg; // Получаем путь из data-dislike-img
-    dislikeImage.src = likeButton.dataset.likeImg;   // Получаем путь из data-like-img
-  }
-}
-
-likeButton.addEventListener('click', function() {
-  setActive(likeButton);
-  rateOrder('{{ order.uuid }}', true);
-});
-
-dislikeButton.addEventListener('click', function() {
-  setActive(dislikeButton);
-  rateOrder('{{ order.uuid }}', false);
-});

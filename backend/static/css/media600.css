@@ -13,12 +13,12 @@
   }
 
   .window-img {
-    width: 80px;
-    height: 80px;
+    width: 74px;
+    height: 71px;
   }
 
   .estimate {
-    font-size: 30px;
+    font-size: 25px;
     margin-top: 33px;
   }
 
@@ -63,7 +63,7 @@
   }
 
   .goods-name:last-child {
-    font-size: 20px;
+    font-size: 25px;
   }
 
   .advantages {
@@ -217,6 +217,9 @@
     color: #fff;
     padding: 20px;
     display: flex;
+    position: absolute;
+    left: 0;
+    width: 100%;
   }
 
   .footer-logo {
