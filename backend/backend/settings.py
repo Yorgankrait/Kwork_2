@@ -1,5 +1,4 @@
 import os
-import requests
 from pathlib import Path
 from dotenv import load_dotenv
 
@@ -139,9 +138,9 @@ STATICFILES_FINDERS = [
 STATIC_URL = '/static/'  # URL для статики в браузере
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')  # Путь для собранной статики (используется при командe collectstatic)
 STATICFILES_DIRS = [
-    #os.path.join(BASE_DIR, 'static')
+    os.path.join(BASE_DIR, 'staticfiles')
     # "/var/www/static/",
-    BASE_DIR / "static",
+    # BASE_DIR / "static",
 ]
 
 MEDIA_URL = "/upload/" #как url данных, которые требуется предоставить.

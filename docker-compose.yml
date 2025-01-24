@@ -17,19 +17,19 @@ services:
   server:
     restart: unless-stopped
     build:
-      context: .
-      dockerfile: ./backend/Dockerfile
+      context: ./backend
+      dockerfile: ./Dockerfile
 
     volumes:
       #- static_volume:/app/backend/static
-      - ./backend/static:/app/backend/static
-      - ./backend/upload:/app/backend/upload
+      - ./static:/app/backend/static
+      - ./upload:/app/backend/upload
     user: root
 
     command: >
       sh -c "python manage.py collectstatic --noinput &&
             python manage.py migrate &&
-            gunicorn config.wsgi:application --bind 0.0.0.0:8000 --workers 4 --threads 2"
+            gunicorn backend.wsgi:application --bind 0.0.0.0:8000 --workers 4 --threads 2"
     expose:
       - 8000
 
@@ -46,38 +46,38 @@ services:
 
     depends_on:
       - db
-  
+
   worker:
-      restart: unless-stopped
-      build:
-          context: .
-          dockerfile: ./backend/Dockerfile
-      
-      command: celery -A backend worker --loglevel=info
-      
-      volumes:
-          - static_volume:/app/backend/django_static
-          - ./backend/upload:/app/backend/upload
-          
-      environment:
-          DEBUG: "True"
-          CELERY_BROKER_URL: "redis://redis:6379/0"
-          CELERY_RESULT_BACKEND: "redis://redis:6379/0"
-          DJANGO_DB: postgresql
-          POSTGRES_HOST: db
-          POSTGRES_NAME: postgres
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_PORT: 5432
-          
-      depends_on:
-          - server
-          - redis
+    restart: unless-stopped
+    build:
+      context: ./backend
+      dockerfile: ./Dockerfile
+
+    command: celery -A backend worker --loglevel=info
+
+    volumes:
+      - static_volume:/app/backend/django_static
+      - ./backend/upload:/app/backend/upload
+
+    environment:
+      DEBUG: "True"
+      CELERY_BROKER_URL: "redis://redis:6379/0"
+      CELERY_RESULT_BACKEND: "redis://redis:6379/0"
+      DJANGO_DB: postgresql
+      POSTGRES_HOST: db
+      POSTGRES_NAME: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_PORT: 5432
+
+    depends_on:
+      - server
+      - redis
   redis:
-      restart: unless-stopped
-      image: redis:7.0.5-alpine
-      expose:
-          - 6379
+    restart: unless-stopped
+    image: redis:7.0.5-alpine
+    expose:
+      - 6379
 
   db:
     image: postgres:13.0-alpine
