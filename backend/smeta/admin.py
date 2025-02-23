@@ -1,6 +1,8 @@
 from django.contrib import admin
+from django.utils.html import format_html
+from django.urls import reverse
 
-from .models import Office, Manager, Option, Product, Additional, Service, Order, OrderRating
+from .models import Office, Manager, Option, Product, Additional, Service, Order, OrderRating, LogFile, ChatCode, AnalyticsCode
 
 
 class ProductInline(admin.TabularInline):
@@ -18,7 +20,7 @@ class ServiceInline(admin.TabularInline):
     fields = ('service',)
 
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ('uuid', 'number', 'office', 'manager', 'old_price', 'new_price')
+    list_display = ('uuid', 'number', 'code', 'office', 'manager', 'old_price', 'new_price')
     search_fields = ('number', 'office__name', 'manager__name')
     inlines = [ProductInline, AdditionalInline, ServiceInline]
 
@@ -74,6 +76,18 @@ class ServiceAdmin(admin.ModelAdmin):
     list_display = ('name', 'cost')
     search_fields = ('name', 'cost')
 
+@admin.register(LogFile)
+class LogFileAdmin(admin.ModelAdmin):
+    list_display = ('file_name', 'created_at', 'download_link', 'delete_button')
+
+    def download_link(self, obj):
+        return format_html('<a href="{}" target="_blank">Скачать</a>', reverse('download_log', args=[obj.file_name]))
+
+    def delete_button(self, obj):
+        return format_html('<a href="{}" style="color:red;">Удалить</a>', reverse('delete_log', args=[obj.pk]))
+
+    download_link.short_description = "Скачать"
+    delete_button.short_description = "Удалить"
 
 admin.site.register(Order, OrderAdmin)
 admin.site.register(OrderRating)
@@ -83,3 +97,6 @@ admin.site.register(Option)
 admin.site.register(Product, ProductAdmin)
 admin.site.register(Additional, AdditionalAdmin)
 admin.site.register(Service, ServiceAdmin)
+admin.site.register(ChatCode)
+admin.site.register(AnalyticsCode)
+

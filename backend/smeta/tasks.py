@@ -19,3 +19,12 @@ def save_pdf_to_order(order_id, file_data, file_name):
         return f"PDF файл успешно сохранен для заказа {order_id}"
     except Order.DoesNotExist:
         return f"Заказ с ID {order_id} не найден"
+
+@shared_task
+def scan_logs_task():
+    call_command('scan_logs')
+
+@shared_task
+def delete_old_logs_task():
+    call_command('delete_old_logs')
+

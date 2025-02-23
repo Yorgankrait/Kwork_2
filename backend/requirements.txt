@@ -59,3 +59,5 @@ vine==5.1.0
 wcwidth==0.2.13
 webencodings==0.5.1
 zopfli==0.2.3.post1
+gunicorn
+

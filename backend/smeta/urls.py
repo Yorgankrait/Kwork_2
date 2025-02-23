@@ -3,7 +3,7 @@ from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
-from .views import SmetaCreateAPIView, smeta_details, rate_smeta
+from .views import SmetaCreateAPIView, smeta_details, rate_smeta, download_log, delete_log, view_log
 
 
 schema_view = get_schema_view(
@@ -17,7 +17,10 @@ schema_view = get_schema_view(
 
 urlpatterns = [
     path('api/smeta_create/', SmetaCreateAPIView.as_view(), name='smeta-create'),
-    path('smeta/<str:uuid>/', smeta_details, name='smeta-details'),
-    path('rate-smeta/<str:uuid>/', rate_smeta, name='rate-smeta'),
+    path('smeta/<uuid:uuid>/', smeta_details, name='smeta-details'),
+    path('api/rate-smeta/<uuid:uuid>/', rate_smeta, name='rate-smeta'),
     path('api/swagger/', schema_view.with_ui('swagger'), name='schema-swagger-ui'),
+    path('download/<str:file_name>/', download_log, name='download_log'),
+    path('delete/<int:pk>/', delete_log, name='delete_log'),
+    path('view/<str:file_name>/', view_log, name='view_log'),
 ]

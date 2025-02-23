@@ -18,8 +18,12 @@
   }
 
   .estimate {
+    margin-top: 25px;
+    font-family: Montserrat;
     font-size: 25px;
-    margin-top: 33px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 24px;
   }
 
   .old-price {
@@ -44,9 +48,20 @@
     font-size: 25px;
   }
 
+  .goods-param {
+    font-size: 20px;
+    font-weight: 700;
+  }
+
   .aperture-text {
     margin-bottom: 15px;
     font-size: 16px;
+  }
+
+  .estimate-span {
+    font-size: 16px;
+    margin-bottom: 25px;
+    margin-top: 10px;
   }
 
   .aperture-container {
@@ -88,6 +103,7 @@
 
   .aperture-table-price {
     font-weight: 700;
+    border-bottom: none;
   }
 
   .table-price {
@@ -200,10 +216,14 @@
     max-width: 260px;
     width: 100%;
   }
+  
+  .questions-block {
+    margin-bottom: 30px;
+  }
 
   .questions-block-title {
     font-size: 25px;
-    margin-bottom: 5px;
+    margin-bottom: 20px;
   }
 
   /* footer */
@@ -253,6 +273,12 @@
     width: 100%;
   }
 
+  .table-2-col-3 {
+  }
+  
+  .table-1-col-3 {
+  }
+
   table {
     font-size: 16px;
   }
@@ -261,3 +287,4 @@
     padding-top: 0 !important;
   }
 }
+

@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 from dotenv import load_dotenv
+from celery.schedules import crontab
 
 
 load_dotenv()
@@ -32,6 +33,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'django_celery_beat',
     'drf_yasg',
     'corsheaders',
     'django_extensions',
@@ -135,12 +137,15 @@ STATICFILES_FINDERS = [
     'django.contrib.staticfiles.finders.DefaultStorageFinder',
 ]
 
+
 STATIC_URL = '/static/'  # URL для статики в браузере
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')  # Путь для собранной статики (используется при командe collectstatic)
+
+# Путь, куда будет собираться статика командой collectstatic
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')  
+
+# Папки, из которых Django будет брать статические файлы во время разработки
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'staticfiles')
-    # "/var/www/static/",
-    # BASE_DIR / "static",
+    os.path.join(BASE_DIR, 'staticfiles'),
 ]
 
 MEDIA_URL = "/upload/" #как url данных, которые требуется предоставить.
@@ -162,3 +167,46 @@ CSRF_TRUSTED_ORIGINS = [
 SITE_URL = "https://offer.okonti.ru"
 
 CORS_ALLOW_ALL_ORIGINS = True
+
+LOG_DIR = BASE_DIR / 'logs'
+LOG_DIR.mkdir(exist_ok=True)
+
+CELERY_BEAT_SCHEDULE = {
+    'delete_old_logs_task': {
+        'task': 'smeta.tasks.delete_old_logs_task',
+        'schedule': crontab(hour=0, minute=0),  # Запуск каждый день в полночь
+    },
+    'scan_logs_directory_task': {
+        'task': 'smeta.tasks.scan_logs_task',
+        'schedule': crontab(minute='*/60'),  # Запуск каждые 60 минут
+    },
+}
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{asctime} {levelname} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'file': {
+            'level': 'INFO',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': LOG_DIR / 'app.log',
+            'maxBytes': 1024 * 1024,  # 1MB
+            'backupCount': 10,  # Хранить до 10 файлов
+            'formatter': 'verbose',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+    },
+}
+

@@ -1,6 +1,10 @@
 from django.db import models
 from django.core.validators import FileExtensionValidator
 import uuid
+import random
+from django.utils.timezone import now
+import os
+from django.conf import settings
 
 
 class Office(models.Model):
@@ -45,7 +49,7 @@ class Product(models.Model):
     inner_color = models.CharField(max_length=255, verbose_name='Цвет внутренний')
     outer_color = models.CharField(max_length=255, verbose_name='Цвет внешний')
     handles = models.CharField(max_length=255, verbose_name='Ручки', null=True, blank=True)
-    options = models.ManyToManyField(Option, related_name='products', verbose_name='Опции')
+    options = models.ManyToManyField(Option, related_name='products', verbose_name='Опции', blank=True)
     quantity = models.PositiveIntegerField(verbose_name='Количество')
     image = models.TextField(verbose_name='Изображение') # base64 image storage
     cost = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Стоимость', default=0)
@@ -90,6 +94,7 @@ class Order(models.Model):
     products = models.ManyToManyField(Product, related_name='orders', verbose_name='Изделия')
     additionals = models.ManyToManyField(Additional, related_name='orders', verbose_name='Дополнительные', blank=True)
     services = models.ManyToManyField(Service, related_name='orders', verbose_name='Услуги', blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
     order_pdf = models.FileField(
         upload_to='media/pdf/',
         blank=True,
@@ -97,6 +102,15 @@ class Order(models.Model):
         verbose_name='PDF сметы',
         validators=[FileExtensionValidator(allowed_extensions=['pdf'])]
     )
+    code = models.CharField(max_length=4, blank=True, verbose_name='Код')
+
+    def generate_code(self):
+        return ''.join(random.choices('0123456789', k=4))
+
+    def save(self, *args, **kwargs):
+        if not self.code:
+            self.code = self.generate_code()
+        super().save(*args, **kwargs)
 
     class Meta:
         verbose_name = 'Смета | Заказ'
@@ -117,3 +131,49 @@ class OrderRating(models.Model):
 
     def __str__(self):
         return f'{self.order.number} | {"Нравится" if self.liked else "Не нравится"}'
+
+
+class LogFile(models.Model):
+    file_name = models.CharField(max_length=255, unique=True, verbose_name='Название файла')
+    created_at = models.DateTimeField(default=now, verbose_name='Дата создания')
+
+    def file_path(self):
+        return os.path.join(settings.LOG_DIR, self.file_name)
+
+    def delete(self, *args, **kwargs):
+        """При удалении из БД удаляем файл с диска"""
+        try:
+            os.remove(self.file_path())
+        except FileNotFoundError:
+            pass
+        super().delete(*args, **kwargs)
+
+    def __str__(self):
+        return self.file_name
+
+    class Meta:
+        verbose_name = 'Лог'
+        verbose_name_plural = 'Логи'
+
+
+class ChatCode(models.Model):
+    code = models.TextField(null=True, blank=True, verbose_name='Код чата')
+
+    def __str__(self):
+        return 'Код чата'
+
+    class Meta:
+            verbose_name = 'Код чата'
+            verbose_name_plural = 'Код чата'
+
+
+class AnalyticsCode(models.Model):
+    code = models.TextField(null=True, blank=True, verbose_name='Код аналитики')
+
+    def __str__(self):
+        return 'Код метрик'
+
+    class Meta:
+        verbose_name = 'Код метрики'
+        verbose_name_plural = 'Код метрики'
+

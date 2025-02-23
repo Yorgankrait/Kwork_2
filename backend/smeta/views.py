@@ -1,7 +1,7 @@
 import json
 
 from django.shortcuts import render, get_object_or_404
-from django.http import JsonResponse, Http404
+from django.http import JsonResponse, Http404, HttpResponse
 from django.conf import settings
 
 from rest_framework.views import APIView
@@ -11,7 +11,7 @@ from rest_framework import status
 from .serializers import OrderSerializer
 from .services import transform_keys, get_or_create_user_id
 from .tasks import save_pdf_to_order
-from .models import Order, OrderRating
+from .models import Order, OrderRating, LogFile, AnalyticsCode, ChatCode
 
 
 class SmetaCreateAPIView(APIView):
@@ -48,7 +48,7 @@ def smeta_details(request, uuid):
         order = get_object_or_404(Order, uuid=uuid)
     except Http404:
         # Если заказ не найден, возвращаем ошибку 404
-        return render(request, 'error.html', {'error_message': 'Заказ не найден.'})
+        return JsonResponse({'success': False, 'error': 'UUID сметы указан не верно'}, status=400)
 
     # Создаем или получаем ID юзера чтобы привязать оценку
     user_id = get_or_create_user_id(request)
@@ -67,9 +67,13 @@ def smeta_details(request, uuid):
         'products': order.products.all(),
         'additionals': order.additionals.all(),
         'services': order.services.all(),
+        'code': order.code,
+        'created_at': order.created_at,
         'total_additionals_cost': total_additionals_cost,
         'total_services_cost': total_services_cost,
-        'order_rating': order_rating
+        'order_rating': order_rating,
+        'analytics_code': AnalyticsCode.objects.first() or None,
+        'chat_code': ChatCode.objects.first() or None
     }
 
     return render(request, 'order_detail.html', context)
@@ -104,3 +108,32 @@ def rate_smeta(request, uuid):
             response.set_cookie('user_id', user_id, max_age=365 * 24 * 60 * 60)  # Срок действия 1 год
 
         return response
+
+
+def download_log(request, file_name):
+    file_path = os.path.join(settings.LOG_DIR, file_name)
+    if os.path.exists(file_path):
+        with open(file_path, 'rb') as f:
+            response = HttpResponse(f.read(), content_type='text/plain')
+            response['Content-Disposition'] = f'attachment; filename="{file_name}"'
+            return response
+    raise Http404("Файл не найден")
+
+def delete_log(request, pk):
+    log_file = get_object_or_404(LogFile, pk=pk)
+    log_file.delete()
+    return redirect('admin:smeta_logfile_changelist')
+
+
+def view_log(request, file_name):
+    log_file = get_object_or_404(LogFile, file_name=file_name)
+    file_path = log_file.file_path()
+
+    if os.path.exists(file_path):
+        with open(file_path, 'r', encoding='utf-8') as f:
+            content = f.read()
+    else:
+        content = "Файл не найден."
+
+    return render(request, 'view_log.html', {'log_file': log_file, 'content': content})
+

@@ -10,6 +10,11 @@
     margin: 0 auto;
   }
 
+  .goods-param {
+    font-size: 20px;
+    font-weight: 700;
+  }
+
   .header-text {
     font-size: 16px;
     margin-top: 25px;
@@ -26,8 +31,8 @@
   }
 
   .estimate {
-    font-size: 30px;
-    margin: 60px 0 20px 0;
+    font-size: 35px;
+    margin: 50px 0px 0px;
   }
 
   .old-price {
@@ -51,6 +56,7 @@
 
   .goods {
     margin-top: 90px;
+    width: 100%;
   }
 
   .additional-goods-container,
@@ -64,15 +70,12 @@
     padding-bottom: 13px;
   }
 
-  .goods-top-wrapper {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 30px;
+  .products-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* Две колонки */
+    gap: 20px; /* Расстояние между элементами */
+    background: red;
   }
-
-  /* .goods-item {
-        width: 100%;
-    } */
 
   .goods-page-title {
     font-size: 35px;
@@ -81,11 +84,6 @@
   .aperture-text {
     margin-bottom: 15px;
     font-size: 16px;
-  }
-
-  .aperture-container {
-    padding: 30px;
-    border-radius: 30px;
   }
 
   .goods-title {
@@ -97,7 +95,7 @@
   }
 
   .goods-name:last-child {
-    font-size: 20px;
+    font-size: 25px;
   }
 
   .advantages {
@@ -197,6 +195,12 @@
     margin-bottom: 80px;
   }
 
+  .estimate-span {
+    font-size: 22px;
+    margin-bottom: 25px;
+    margin-top: 10px;
+  }
+
   .text-block > p {
     font-size: 18px;
     line-height: 22px;
@@ -240,10 +244,15 @@
     max-width: 285px;
     width: 100%;
   }
+  
+  .questions-block {
+    margin-bottom: 40px;
+  }
 
   .questions-block-title {
     font-size: 35px;
-    padding-bottom: 15px;
+    margin-bottom: 30px;
+    margin-top: 80px;
   }
 
   .questions-block-question {
@@ -299,7 +308,20 @@
     font-size: 12px;
   }
 
+  .goods-top-wrapper {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 2 колонки одинаковой ширины */
+    gap: 30px;
+  }
+
+  .table-2-col-3 {
+  }
+
+  .table-1-col-3 {
+  }
+
   table {
     font-size: 16px;
   }
 }
+

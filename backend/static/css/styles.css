@@ -74,6 +74,12 @@ button {
   line-height: 24px;
 }
 
+.estimate-span {
+  font-size: 14px;
+  margin-bottom: 25px;
+  margin-top: 10px;
+}
+
 .old-price {
   margin-top: 10px;
   text-decoration: line-through;
@@ -170,7 +176,7 @@ button {
 }
 
 .goods-name {
-  font-size: 25px;
+  font-size: 20px;
   font-weight: 700;
   margin-right: 5px;
 }
@@ -410,6 +416,7 @@ th {
 .questions-block {
   font-size: 20px;
   line-height: 24px;
+  margin-bottom: 30px;
 }
 
 .questions-block-title {
@@ -418,7 +425,8 @@ th {
   font-family: Montserrat;
   color: #222222;
   font-weight: 700;
-  padding-bottom: 10px;
+  margin-bottom: 16px;
+  margin-top: 50px;
 }
 
 .questions-block-question {
@@ -428,10 +436,6 @@ th {
   margin: 15px 0;
   cursor: pointer;
   font-weight: 700;
-}
-
-.questions-block-question:last-child {
-  margin: 15px 0 85px 0;
 }
 
 /* footer */
@@ -542,6 +546,10 @@ td {
   width: 20%;
 }
 
+.table-2-col-3 {
+  width: 0;
+}
+
 .table-total,
 .table-total-price,
 .table-td-empty {
@@ -589,3 +597,4 @@ td {
   font-weight: bold;
   cursor: pointer;
 }
+

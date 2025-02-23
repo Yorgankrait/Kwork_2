@@ -28,5 +28,6 @@ EXPOSE 8000
 # Create a non-root user
 RUN adduser --disabled-password admin-user
 
+RUN chown admin-user:root "celerybeat-schedule"
 # Switch to the non-root user
 USER admin-user

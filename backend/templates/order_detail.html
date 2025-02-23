@@ -31,6 +31,10 @@
     <!-- <link rel="shortcut icon" href="https://okonti.ru/local/templates/okonti/assets/favicon/favicon.ico" /> -->
 
     <title>{{ order.number }}</title>
+
+    {% if analytics_code %}
+        {{ analytics_code.code|safe }}
+    {% endif %}
   </head>
   <body>
     <div class="wrapper">
@@ -41,13 +45,14 @@
               <img src="{% static '/img/header-logo.svg' %}" alt="logo" class="logo" />
             </div>
             <div class="header-text">
-              Офис продаж: {{ order.office.name }} - {{ order.office.addresss }} </br> Менеджер:
+              Офис продаж: {{ order.office.name }} - {{ order.office.address }} </br> Менеджер:
               {{ order.manager.name }}, {{ order.manager.phone|format_phone }}
             </div>
           </div>
         </header>
 
-        <div class="estimate">Смета №{{ order.number }}</div>
+        <div class="estimate">Смета {{ order.created_at|format_date_custom }}-{{ order.code }}</div>
+        <p class="estimate-span">Заказ: {{ order.number }}</p>
         <div class="pricing">
           <div class="old-price">{{ order.old_price |currency }}</div>
           <div class="new-price">{{ order.new_price |currency }}</div>
@@ -57,12 +62,13 @@
         </div>
         <div class="goods">
           <div class="aperture">
-            <div>
               <div class="goods-page-title">Изделия</div>
               <div class="goods-top-wrapper">
+  
                 <!-- |slice:"1:4"                 -->
                      {% for product in products %}
                         <div class="goods-item">
+
                             <div class="aperture-text">Проём {{ product.identifier }}</div>
                             <div class="aperture-container">
                               <div class="top-goods-container">
@@ -90,16 +96,16 @@
                                     <img
                                     alt=""
                                     class="window-img"
-                                    src="data:image/png;base64, {{product.image}} "
+                                    src="data:image/png;base64, {{product.image}}"
+				    onclick="toggleImage('{{ product.identifier }}')"
                                     />
                                     <img
                                     src="{% static 'img/expand.svg' %}"
                                       alt=""
                                       class="expand-img"
-                                      onclick="toggleImage()"
                                     />
-                                    <div class="modal" id="imageModal">
-                                      <span class="close" onclick="closeImage()">&times;</span>
+                                    <div class="modal" id="imageModal-{{ product.identifier }}">
+                                      <span class="close" onclick="closeImage('{{ product.identifier }}')">&times;</span>
                                       <img
                                         alt=""
                                         class="expand-img-full"
@@ -159,8 +165,7 @@
                               </tr>
                             </tbody>
                           </table>
-                          <div class="aperture-list"
-                            style="{% if not product.options.all %}margin-top: 60px;{% endif %}">
+                          <div class="aperture-list" style="{% if not product.options.all %}margin-top: 60px;{% endif %}">
                             <div class="aperture-list-block">
                               <div class="aperture-list-title">Габариты проёма:</div>
                               <div class="aperture-list-params">{{ product.width }}×{{ product.height }}</div>
@@ -186,10 +191,12 @@
                               <div class="aperture-list-params">0 ₽</div>
                             </div>
                           </div>
+                          </div>
                         </div>
                     {% empty %}
                     <div class="goods-item">Нет продуктов в этом заказе.</div>
                     {% endfor %}
+                </div>
               </div>
             </div>
       <!--  -->
@@ -354,6 +361,9 @@
           </div>
         </div>
       </div>
+      {% if chat_code %}
+        {{ chat_code.code|safe }}
+      {% endif %}
     </div>
 
     <script src="{% static 'js/script.js' %}"></script>
@@ -395,3 +405,4 @@
     </script>
   </body>
 </html>
+
