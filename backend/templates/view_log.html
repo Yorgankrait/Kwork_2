@@ -1,0 +1,188 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block title %}{{ log_file.file_name }} - Просмотр лога{% endblock %}
+
+{% block extrahead %}
+<style>
+    .log-viewer {
+        background-color: #f8f9fa;
+        padding: 15px;
+        border-radius: 5px;
+        font-family: monospace;
+        overflow: auto;
+        height: 600px;
+        white-space: pre-wrap;
+        word-break: break-all;
+    }
+    .log-viewer::-webkit-scrollbar {
+        width: 10px;
+    }
+    .log-viewer::-webkit-scrollbar-track {
+        background: #f1f1f1;
+    }
+    .log-viewer::-webkit-scrollbar-thumb {
+        background: #888;
+    }
+    .log-viewer::-webkit-scrollbar-thumb:hover {
+        background: #555;
+    }
+    .log-info {
+        color: #0d6efd;
+    }
+    .log-warning {
+        color: #ffc107;
+    }
+    .log-error {
+        color: #dc3545;
+    }
+    .log-debug {
+        color: #6c757d;
+    }
+    .log-controls {
+        margin-bottom: 15px;
+    }
+    .log-search {
+        padding: 5px 10px;
+        margin-right: 10px;
+        width: 300px;
+    }
+    .log-filter {
+        padding: 5px 10px;
+        margin-right: 10px;
+    }
+    .log-count {
+        margin-left: 15px;
+        font-weight: bold;
+    }
+    .highlight {
+        background-color: yellow;
+        color: #000;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <h1>Просмотр лога: {{ log_file.file_name }}</h1>
+            <div class="log-controls">
+                <input type="text" id="searchInput" class="log-search" placeholder="Поиск в логе...">
+                <select id="logLevel" class="log-filter">
+                    <option value="all">Все уровни</option>
+                    <option value="info">INFO</option>
+                    <option value="warning">WARNING</option>
+                    <option value="error">ERROR</option>
+                    <option value="debug">DEBUG</option>
+                </select>
+                <button id="btnApplyFilter" class="button">Применить фильтр</button>
+                <span id="logLineCount" class="log-count"></span>
+            </div>
+            <div class="log-viewer" id="logContent">
+{{ content }}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const logContent = document.getElementById('logContent');
+    const searchInput = document.getElementById('searchInput');
+    const logLevel = document.getElementById('logLevel');
+    const btnApplyFilter = document.getElementById('btnApplyFilter');
+    const logLineCount = document.getElementById('logLineCount');
+    
+    const originalContent = logContent.innerHTML;
+    let lines = originalContent.split('\n');
+    logLineCount.textContent = `Строк: ${lines.length}`;
+    
+    // Раскрасить строки логов в зависимости от уровня
+    function colorizeLog() {
+        const html = lines.map(line => {
+            if (line.includes('INFO')) {
+                return `<div class="log-info">${line}</div>`;
+            } else if (line.includes('WARNING')) {
+                return `<div class="log-warning">${line}</div>`;
+            } else if (line.includes('ERROR')) {
+                return `<div class="log-error">${line}</div>`;
+            } else if (line.includes('DEBUG')) {
+                return `<div class="log-debug">${line}</div>`;
+            }
+            return `<div>${line}</div>`;
+        }).join('');
+        logContent.innerHTML = html;
+    }
+    
+    // Применить фильтр и поиск
+    function applyFilter() {
+        const searchTerm = searchInput.value.toLowerCase();
+        const level = logLevel.value;
+        
+        let filteredLines = lines;
+        
+        // Фильтр по уровню
+        if (level !== 'all') {
+            const levelUpper = level.toUpperCase();
+            filteredLines = filteredLines.filter(line => line.includes(levelUpper));
+        }
+        
+        // Поиск по тексту
+        if (searchTerm) {
+            filteredLines = filteredLines.filter(line => 
+                line.toLowerCase().includes(searchTerm)
+            );
+            
+            // Подсветка найденного текста
+            const html = filteredLines.map(line => {
+                const regex = new RegExp(searchTerm, 'gi');
+                const highlightedLine = line.replace(regex, match => `<span class="highlight">${match}</span>`);
+                
+                if (line.includes('INFO')) {
+                    return `<div class="log-info">${highlightedLine}</div>`;
+                } else if (line.includes('WARNING')) {
+                    return `<div class="log-warning">${highlightedLine}</div>`;
+                } else if (line.includes('ERROR')) {
+                    return `<div class="log-error">${highlightedLine}</div>`;
+                } else if (line.includes('DEBUG')) {
+                    return `<div class="log-debug">${highlightedLine}</div>`;
+                }
+                return `<div>${highlightedLine}</div>`;
+            }).join('');
+            
+            logContent.innerHTML = html;
+        } else {
+            // Просто раскрасить без подсветки
+            const html = filteredLines.map(line => {
+                if (line.includes('INFO')) {
+                    return `<div class="log-info">${line}</div>`;
+                } else if (line.includes('WARNING')) {
+                    return `<div class="log-warning">${line}</div>`;
+                } else if (line.includes('ERROR')) {
+                    return `<div class="log-error">${line}</div>`;
+                } else if (line.includes('DEBUG')) {
+                    return `<div class="log-debug">${line}</div>`;
+                }
+                return `<div>${line}</div>`;
+            }).join('');
+            
+            logContent.innerHTML = html;
+        }
+        
+        logLineCount.textContent = `Строк: ${filteredLines.length} из ${lines.length}`;
+    }
+    
+    // Обработчики событий
+    btnApplyFilter.addEventListener('click', applyFilter);
+    searchInput.addEventListener('keyup', function(e) {
+        if (e.key === 'Enter') {
+            applyFilter();
+        }
+    });
+    
+    // Инициализация
+    colorizeLog();
+});
+</script>
+{% endblock %} 

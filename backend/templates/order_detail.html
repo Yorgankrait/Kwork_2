@@ -7,6 +7,13 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+    <!-- Скрипты в начале head -->
+    {% if head_start_scripts %}
+        {% for script in head_start_scripts %}
+            {{ script.code|safe }}
+        {% endfor %}
+    {% endif %}
+
     <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
     <link rel="stylesheet" href="{% static 'css/media600.css' %}" />
     <link rel="stylesheet" href="{% static 'css/media1240.css' %}" />
@@ -32,11 +39,26 @@
 
     <title>{{ order.number }}</title>
 
+    <!-- Поддержка для старых кодов метрик и чатов -->
     {% if analytics_code %}
         {{ analytics_code.code|safe }}
     {% endif %}
+
+    <!-- Скрипты в конце head -->
+    {% if head_end_scripts %}
+        {% for script in head_end_scripts %}
+            {{ script.code|safe }}
+        {% endfor %}
+    {% endif %}
   </head>
   <body>
+    <!-- Скрипты в начале body -->
+    {% if body_start_scripts %}
+        {% for script in body_start_scripts %}
+            {{ script.code|safe }}
+        {% endfor %}
+    {% endif %}
+
     <div class="wrapper">
       <div class="content">
         <header>
@@ -403,6 +425,18 @@
         document.getElementById('dislike-button').querySelector('img').src = "{% static 'img/like-dislike-filled.png' %}";
       });
     </script>
+
+    <!-- Скрипты в конце body -->
+    {% if body_end_scripts %}
+        {% for script in body_end_scripts %}
+            {{ script.code|safe }}
+        {% endfor %}
+    {% endif %}
+
+    <!-- Поддержка для старых кодов чатов -->
+    {% if chat_code %}
+        {{ chat_code.code|safe }}
+    {% endif %}
   </body>
 </html>
 

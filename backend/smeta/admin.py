@@ -1,8 +1,13 @@
 from django.contrib import admin
 from django.utils.html import format_html
 from django.urls import reverse
+import os
 
-from .models import Office, Manager, Option, Product, Additional, Service, Order, OrderRating, LogFile, ChatCode, AnalyticsCode
+from .models import (
+    Office, Manager, Option, Product, Additional, Service, Order, OrderRating, 
+    LogFile, ChatCode, AnalyticsCode, RawJSON, ScriptCode, WebhookSettings, 
+    TemplateSettings, LogSettings, LogFilter, LogKeyword
+)
 
 
 class ProductInline(admin.TabularInline):
@@ -78,16 +83,118 @@ class ServiceAdmin(admin.ModelAdmin):
 
 @admin.register(LogFile)
 class LogFileAdmin(admin.ModelAdmin):
-    list_display = ('file_name', 'created_at', 'download_link', 'delete_button')
+    list_display = ('file_name', 'created_at', 'file_exists', 'download_link', 'delete_button')
+    search_fields = ('file_name',)
+    readonly_fields = ('file_exists', 'file_size')
+    fields = ('file_name', 'created_at', 'file_exists', 'file_size')
+
+    def file_exists(self, obj):
+        """Проверяет существование файла на диске"""
+        if obj and os.path.exists(obj.file_path()):
+            return format_html('<span style="color: green;">✓ Файл существует</span>')
+        return format_html('<span style="color: red;">✗ Файл не существует</span>')
+    
+    def file_size(self, obj):
+        """Возвращает размер файла, если он существует"""
+        if obj and os.path.exists(obj.file_path()):
+            size_bytes = os.path.getsize(obj.file_path())
+            if size_bytes < 1024:
+                return f"{size_bytes} байт"
+            elif size_bytes < 1024 * 1024:
+                return f"{size_bytes/1024:.2f} КБ"
+            else:
+                return f"{size_bytes/(1024*1024):.2f} МБ"
+        return "—"
 
     def download_link(self, obj):
-        return format_html('<a href="{}" target="_blank">Скачать</a>', reverse('download_log', args=[obj.file_name]))
+        # Добавляем слеш в конец URL, чтобы соответствовать настройке URL в urls.py
+        url = reverse('download_log', args=[obj.file_name])
+        if not url.endswith('/'):
+            url += '/'
+        
+        if obj and os.path.exists(obj.file_path()):
+            return format_html('<a href="{}" target="_blank">Скачать</a>', url)
+        return format_html('<span style="color: gray;">Скачать</span>')
 
     def delete_button(self, obj):
         return format_html('<a href="{}" style="color:red;">Удалить</a>', reverse('delete_log', args=[obj.pk]))
 
+    file_exists.short_description = "Статус файла"
+    file_size.short_description = "Размер файла"
     download_link.short_description = "Скачать"
     delete_button.short_description = "Удалить"
+    
+    def add_view(self, request, form_url='', extra_context=None):
+        extra_context = extra_context or {}
+        extra_context['title'] = 'Добавление лог-файла'
+        extra_context['additional_info'] = 'При создании записи пустой файл будет создан автоматически.'
+        return super().add_view(request, form_url, extra_context)
+
+@admin.register(RawJSON)
+class RawJSONAdmin(admin.ModelAdmin):
+    list_display = ('order', 'created_at')
+    search_fields = ('order__number',)
+    readonly_fields = ('data', 'created_at')
+
+@admin.register(ScriptCode)
+class ScriptCodeAdmin(admin.ModelAdmin):
+    list_display = ('name', 'placement', 'is_active')
+    list_filter = ('placement', 'is_active')
+    search_fields = ('name', 'code')
+
+@admin.register(WebhookSettings)
+class WebhookSettingsAdmin(admin.ModelAdmin):
+    list_display = ('url', 'is_active', 'description')
+    list_filter = ('is_active',)
+
+@admin.register(TemplateSettings)
+class TemplateSettingsAdmin(admin.ModelAdmin):
+    list_display = ('name', 'is_active')
+    list_filter = ('is_active',)
+
+@admin.register(LogSettings)
+class LogSettingsAdmin(admin.ModelAdmin):
+    list_display = ('retention_days',)
+
+@admin.register(LogKeyword)
+class LogKeywordAdmin(admin.ModelAdmin):
+    list_display = ('keyword', 'usage_count', 'description')
+    search_fields = ('keyword', 'description')
+    ordering = ('-usage_count', 'keyword')
+    readonly_fields = ('usage_count',)
+
+@admin.register(LogFilter)
+class LogFilterAdmin(admin.ModelAdmin):
+    list_display = ('name', 'log_level', 'get_keywords', 'is_active', 'created_at', 'export_button')
+    list_filter = ('log_level', 'is_active', 'keywords')
+    search_fields = ('name', 'description')
+    readonly_fields = ('created_at',)
+    filter_horizontal = ('keywords',)
+    
+    def get_keywords(self, obj):
+        """Возвращает список ключевых слов фильтра"""
+        if not obj.keywords.exists():
+            return '-'
+        return ", ".join([kw.keyword for kw in obj.keywords.all()[:5]]) + (
+            "..." if obj.keywords.count() > 5 else "")
+    
+    def export_button(self, obj):
+        """Кнопка для экспорта отфильтрованных логов"""
+        if obj and obj.is_active:
+            url = reverse('export_filtered_log', args=[obj.id])
+            return format_html('<a href="{}" target="_blank" class="button">Экспортировать логи</a>', url)
+        return '-'
+    
+    def save_related(self, request, form, formsets, change):
+        """Обновляет счетчик использования ключевых слов при сохранении фильтра"""
+        super().save_related(request, form, formsets, change)
+        # Обновляем счетчики использования ключевых слов
+        for keyword in form.instance.keywords.all():
+            keyword.usage_count = keyword.filters.count()
+            keyword.save()
+    
+    get_keywords.short_description = "Ключевые слова"
+    export_button.short_description = "Экспорт"
 
 admin.site.register(Order, OrderAdmin)
 admin.site.register(OrderRating)

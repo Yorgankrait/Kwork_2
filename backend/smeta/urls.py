@@ -3,7 +3,7 @@ from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
-from .views import SmetaCreateAPIView, smeta_details, rate_smeta, download_log, delete_log, view_log
+from .views import SmetaCreateAPIView, smeta_details, rate_smeta, download_log, delete_log, view_log, export_filtered_log
 
 
 schema_view = get_schema_view(
@@ -23,4 +23,5 @@ urlpatterns = [
     path('download/<str:file_name>/', download_log, name='download_log'),
     path('delete/<int:pk>/', delete_log, name='delete_log'),
     path('view/<str:file_name>/', view_log, name='view_log'),
+    path('export-filtered-log/<int:filter_id>/', export_filtered_log, name='export_filtered_log'),
 ]

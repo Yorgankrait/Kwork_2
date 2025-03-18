@@ -1,6 +1,46 @@
 server {
 	listen 80 default_server;
-	return 444;
+	server_name localhost;
+
+	charset     utf-8;
+	client_max_body_size 20M;
+	
+	location /upload/ {
+		autoindex on;
+		alias /app/backend/upload/;
+	}
+
+	location /smeta/ {
+		proxy_set_header Host $http_host;
+		proxy_pass http://server:8000;
+	}
+
+	location /admin {
+		try_files $uri @proxy_api;
+	}
+
+	location /api {
+		try_files $uri @proxy_api;
+	}               
+	
+	location /order {
+		try_files $uri @proxy_api;
+	}               
+	
+	location @proxy_api {
+		proxy_set_header Host $http_host;
+		proxy_redirect off;
+		proxy_pass   http://server:8000;
+	}
+
+	location /static/ {
+		autoindex on;
+		alias /app/backend/static/;
+	}
+
+	location = /robots.txt {
+		alias /app/backend/static/robots.txt;
+	}
 }
 
 server {
@@ -69,24 +109,4 @@ server {
     
     location @proxy_api {
         proxy_set_header Host $http_host;
-        proxy_redirect off;
-        proxy_pass   http://server:8000;
-    }
-
-    location /static/ {
-        autoindex on;
-        alias /app/backend/static/;
-    }
-
-    location = /robots.txt {
-        alias /app/backend/static/robots.txt;
-    }
-        
-    #root /var/www/html;
-    #index index.html index.htm;
-    
-    #location /show {
-    #        try_files $uri $uri/ /index.html;
-    #}
-}
-
+        proxy_re

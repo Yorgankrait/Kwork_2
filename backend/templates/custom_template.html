@@ -1,0 +1,133 @@
+{% load static %}
+{% load custom_filters %}
+{% load custom_template_tags %}
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ order.number }}</title>
+
+    {% if head_start_scripts %}
+        {% for script in head_start_scripts %}
+            {{ script.code|safe }}
+        {% endfor %}
+    {% endif %}
+
+    <style>
+        /* Подключаем пользовательский стиль из TemplateSettings */
+        {{ template.css_template|safe }}
+    </style>
+
+    {% if head_end_scripts %}
+        {% for script in head_end_scripts %}
+            {{ script.code|safe }}
+        {% endfor %}
+    {% endif %}
+</head>
+<body>
+    {% if body_start_scripts %}
+        {% for script in body_start_scripts %}
+            {{ script.code|safe }}
+        {% endfor %}
+    {% endif %}
+
+    <div id="template-content">
+        <!-- Пользовательский шаблон с переменными контекста -->
+        {% if rendered_template %}
+            {{ rendered_template|safe }}
+        {% else %}
+            <p>Ошибка: Шаблон не был обработан</p>
+        {% endif %}
+    </div>
+
+    <script>
+        // Инициализируем переменные для шаблона (для совместимости со старыми шаблонами)
+        window.orderData = {
+            uuid: "{{ order.uuid }}",
+            number: "{{ order.number }}",
+            code: "{{ order.code }}",
+            oldPrice: "{{ order.old_price }}",
+            newPrice: "{{ order.new_price }}",
+            createdAt: "{{ order.created_at|date:'d.m.Y H:i' }}",
+            office: {
+                name: "{{ office.name }}",
+                address: "{{ office.address }}"
+            },
+            manager: {
+                name: "{{ manager.name }}",
+                phone: "{{ manager.phone }}"
+            },
+            products: [
+                {% for product in products %}
+                {
+                    system: "{{ product.system }}",
+                    series: "{{ product.series|default_if_none:'' }}",
+                    width: {{ product.width }},
+                    height: {{ product.height }},
+                    baseColor: "{{ product.base_color }}",
+                    innerColor: "{{ product.inner_color }}",
+                    outerColor: "{{ product.outer_color }}",
+                    handles: "{{ product.handles|default_if_none:'' }}",
+                    quantity: {{ product.quantity }},
+                    cost: {{ product.cost }},
+                    image: "{{ product.image }}"
+                }{% if not forloop.last %},{% endif %}
+                {% endfor %}
+            ],
+            additionals: [
+                {% for additional in additionals %}
+                {
+                    name: "{{ additional.name }}",
+                    quantity: {{ additional.quantity }},
+                    cost: {{ additional.cost }}
+                }{% if not forloop.last %},{% endif %}
+                {% endfor %}
+            ],
+            services: [
+                {% for service in services %}
+                {
+                    name: "{{ service.name }}",
+                    cost: {{ service.cost }}
+                }{% if not forloop.last %},{% endif %}
+                {% endfor %}
+            ],
+            totalAdditionalsСost: {{ total_additionals_cost }},
+            totalServicesСost: {{ total_services_cost }}
+        };
+
+        // Функция для оценки сметы
+        function rateOrder(liked) {
+            fetch(`/api/rate-smeta/{{ order.uuid }}/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({ liked: liked })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Успешно оценили
+                    alert('Спасибо за вашу оценку!');
+                } else {
+                    // Ошибка при оценке
+                    alert('Произошла ошибка при оценке');
+                }
+            })
+            .catch(error => {
+                console.error('Ошибка:', error);
+                alert('Произошла ошибка при оценке');
+            });
+        }
+    </script>
+
+    {% if body_end_scripts %}
+        {% for script in body_end_scripts %}
+            {{ script.code|safe }}
+        {% endfor %}
+    {% endif %}
+</body>
+</html> 
