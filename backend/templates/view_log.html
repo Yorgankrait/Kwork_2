@@ -1,91 +1,222 @@
 {% extends "admin/base_site.html" %}
 {% load static %}
 
-{% block title %}{{ log_file.file_name }} - Просмотр лога{% endblock %}
+{% block title %}{{ title|default:"Просмотр лога" }}{% endblock %}
 
 {% block extrahead %}
 <style>
+    .log-container {
+        padding: 20px;
+        background-color: #f5f5f5;
+        border-radius: 5px;
+        margin-bottom: 20px;
+    }
+    .log-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 10px;
+    }
+    .log-title {
+        font-size: 24px;
+        font-weight: bold;
+        color: #333;
+    }
+    .log-actions {
+        display: flex;
+        gap: 10px;
+    }
+    .log-info {
+        margin-bottom: 15px;
+        font-size: 14px;
+        color: #555;
+    }
     .log-viewer {
-        background-color: #f8f9fa;
+        background-color: #1e1e1e;
+        color: #f8f8f8;
         padding: 15px;
         border-radius: 5px;
-        font-family: monospace;
+        font-family: 'Courier New', monospace;
         overflow: auto;
         height: 600px;
         white-space: pre-wrap;
         word-break: break-all;
+        font-size: 14px;
+        line-height: 1.5;
     }
     .log-viewer::-webkit-scrollbar {
         width: 10px;
     }
     .log-viewer::-webkit-scrollbar-track {
-        background: #f1f1f1;
+        background: #2e2e2e;
     }
     .log-viewer::-webkit-scrollbar-thumb {
-        background: #888;
-    }
-    .log-viewer::-webkit-scrollbar-thumb:hover {
         background: #555;
     }
-    .log-info {
-        color: #0d6efd;
+    .log-viewer::-webkit-scrollbar-thumb:hover {
+        background: #777;
     }
-    .log-warning {
-        color: #ffc107;
+    .log-info-level {
+        color: #65baff;
     }
-    .log-error {
-        color: #dc3545;
+    .log-warning-level {
+        color: #ffcc00;
     }
-    .log-debug {
-        color: #6c757d;
+    .log-error-level {
+        color: #ff6b6b;
+    }
+    .log-debug-level {
+        color: #7ecf6f;
     }
     .log-controls {
+        display: flex;
+        align-items: center;
         margin-bottom: 15px;
+        padding: 10px;
+        background-color: #eee;
+        border-radius: 5px;
     }
     .log-search {
-        padding: 5px 10px;
+        padding: 8px 12px;
         margin-right: 10px;
         width: 300px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
     }
     .log-filter {
-        padding: 5px 10px;
+        padding: 8px 12px;
         margin-right: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+    }
+    .filter-button {
+        padding: 8px 12px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    .filter-button:hover {
+        background-color: #0069d9;
     }
     .log-count {
         margin-left: 15px;
         font-weight: bold;
+        color: #333;
     }
     .highlight {
         background-color: yellow;
         color: #000;
     }
+    .error-message {
+        padding: 15px;
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+        border-radius: 4px;
+        margin-bottom: 20px;
+    }
+    .return-link {
+        display: inline-block;
+        margin-bottom: 20px;
+        color: #007bff;
+        text-decoration: none;
+    }
+    .return-link:hover {
+        text-decoration: underline;
+    }
+    .button {
+        padding: 8px 12px;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        text-decoration: none;
+        cursor: pointer;
+        display: inline-block;
+    }
+    .button-primary {
+        background-color: #007bff;
+    }
+    .button-success {
+        background-color: #28a745;
+    }
+    .button-danger {
+        background-color: #dc3545;
+    }
+    .button-warning {
+        background-color: #ffc107;
+        color: #212529;
+    }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="container">
-    <div class="row">
-        <div class="col-12">
-            <h1>Просмотр лога: {{ log_file.file_name }}</h1>
-            <div class="log-controls">
-                <input type="text" id="searchInput" class="log-search" placeholder="Поиск в логе...">
-                <select id="logLevel" class="log-filter">
-                    <option value="all">Все уровни</option>
-                    <option value="info">INFO</option>
-                    <option value="warning">WARNING</option>
-                    <option value="error">ERROR</option>
-                    <option value="debug">DEBUG</option>
-                </select>
-                <button id="btnApplyFilter" class="button">Применить фильтр</button>
-                <span id="logLineCount" class="log-count"></span>
-            </div>
-            <div class="log-viewer" id="logContent">
-{{ content }}
-            </div>
+<div class="log-container">
+    {% if error %}
+    <div class="error-message">
+        <strong>Ошибка:</strong> {{ error }}
+    </div>
+    {% endif %}
+    
+    <a href="{% url 'admin:smeta_logfile_changelist' %}" class="return-link">
+        &larr; Вернуться к списку логов
+    </a>
+    
+    <div class="log-header">
+        <div class="log-title">
+            {% if log_file %}
+                Просмотр лога: {{ log_file.file_name }}
+            {% else %}
+                {{ title }}
+            {% endif %}
+        </div>
+        <div class="log-actions">
+            {% if log_file %}
+                <a href="{% url 'download_log' log_file.file_name %}" class="button button-primary">
+                    Скачать файл
+                </a>
+                <a href="{% url 'delete_log' log_file.pk %}" class="button button-danger" 
+                   onclick="return confirm('Вы уверены, что хотите удалить этот лог-файл?')">
+                    Удалить
+                </a>
+            {% endif %}
         </div>
     </div>
+    
+    {% if log_file %}
+    <div class="log-info">
+        <strong>Файл:</strong> {{ log_file.file_name }} &nbsp;|&nbsp;
+        <strong>Создан:</strong> {{ log_file.created_at|date:"d.m.Y H:i:s" }} &nbsp;|&nbsp;
+        <strong>Размер:</strong> {{ formatted_size }}
+    </div>
+    {% endif %}
+    
+    {% if content and not error %}
+    <div class="log-controls">
+        <input type="text" id="searchInput" class="log-search" placeholder="Поиск в логе...">
+        <select id="logLevel" class="log-filter">
+            <option value="all">Все уровни</option>
+            <option value="INFO">Информация (INFO)</option>
+            <option value="WARNING">Предупреждения (WARNING)</option>
+            <option value="ERROR">Ошибки (ERROR)</option>
+            <option value="DEBUG">Отладка (DEBUG)</option>
+        </select>
+        <button id="btnApplyFilter" class="filter-button">Применить фильтр</button>
+        <span id="logLineCount" class="log-count"></span>
+    </div>
+    
+    <div class="log-viewer" id="logContent">
+        {{ content }}
+    </div>
+    {% endif %}
 </div>
 
+{% if content and not error %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const logContent = document.getElementById('logContent');
@@ -102,13 +233,13 @@ document.addEventListener('DOMContentLoaded', function() {
     function colorizeLog() {
         const html = lines.map(line => {
             if (line.includes('INFO')) {
-                return `<div class="log-info">${line}</div>`;
+                return `<div class="log-info-level">${line}</div>`;
             } else if (line.includes('WARNING')) {
-                return `<div class="log-warning">${line}</div>`;
+                return `<div class="log-warning-level">${line}</div>`;
             } else if (line.includes('ERROR')) {
-                return `<div class="log-error">${line}</div>`;
+                return `<div class="log-error-level">${line}</div>`;
             } else if (line.includes('DEBUG')) {
-                return `<div class="log-debug">${line}</div>`;
+                return `<div class="log-debug-level">${line}</div>`;
             }
             return `<div>${line}</div>`;
         }).join('');
@@ -124,8 +255,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Фильтр по уровню
         if (level !== 'all') {
-            const levelUpper = level.toUpperCase();
-            filteredLines = filteredLines.filter(line => line.includes(levelUpper));
+            filteredLines = filteredLines.filter(line => line.includes(level));
         }
         
         // Поиск по тексту
@@ -140,13 +270,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 const highlightedLine = line.replace(regex, match => `<span class="highlight">${match}</span>`);
                 
                 if (line.includes('INFO')) {
-                    return `<div class="log-info">${highlightedLine}</div>`;
+                    return `<div class="log-info-level">${highlightedLine}</div>`;
                 } else if (line.includes('WARNING')) {
-                    return `<div class="log-warning">${highlightedLine}</div>`;
+                    return `<div class="log-warning-level">${highlightedLine}</div>`;
                 } else if (line.includes('ERROR')) {
-                    return `<div class="log-error">${highlightedLine}</div>`;
+                    return `<div class="log-error-level">${highlightedLine}</div>`;
                 } else if (line.includes('DEBUG')) {
-                    return `<div class="log-debug">${highlightedLine}</div>`;
+                    return `<div class="log-debug-level">${highlightedLine}</div>`;
                 }
                 return `<div>${highlightedLine}</div>`;
             }).join('');
@@ -156,13 +286,13 @@ document.addEventListener('DOMContentLoaded', function() {
             // Просто раскрасить без подсветки
             const html = filteredLines.map(line => {
                 if (line.includes('INFO')) {
-                    return `<div class="log-info">${line}</div>`;
+                    return `<div class="log-info-level">${line}</div>`;
                 } else if (line.includes('WARNING')) {
-                    return `<div class="log-warning">${line}</div>`;
+                    return `<div class="log-warning-level">${line}</div>`;
                 } else if (line.includes('ERROR')) {
-                    return `<div class="log-error">${line}</div>`;
+                    return `<div class="log-error-level">${line}</div>`;
                 } else if (line.includes('DEBUG')) {
-                    return `<div class="log-debug">${line}</div>`;
+                    return `<div class="log-debug-level">${line}</div>`;
                 }
                 return `<div>${line}</div>`;
             }).join('');
@@ -185,4 +315,5 @@ document.addEventListener('DOMContentLoaded', function() {
     colorizeLog();
 });
 </script>
+{% endif %}
 {% endblock %} 

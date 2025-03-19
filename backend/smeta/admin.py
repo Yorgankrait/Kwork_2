@@ -83,11 +83,15 @@ class ServiceAdmin(admin.ModelAdmin):
 
 @admin.register(LogFile)
 class LogFileAdmin(admin.ModelAdmin):
-    list_display = ('file_name', 'created_at', 'file_exists', 'download_link', 'delete_button')
+    list_display = ('file_name', 'created_at', 'file_exists', 'view_link', 'download_link', 'delete_button')
     search_fields = ('file_name',)
     readonly_fields = ('file_exists', 'file_size')
     fields = ('file_name', 'created_at', 'file_exists', 'file_size')
-
+    
+    def get_queryset(self, request):
+        # Получаем все объекты LogFile
+        return super().get_queryset(request)
+    
     def file_exists(self, obj):
         """Проверяет существование файла на диске"""
         if obj and os.path.exists(obj.file_path()):
@@ -106,29 +110,36 @@ class LogFileAdmin(admin.ModelAdmin):
                 return f"{size_bytes/(1024*1024):.2f} МБ"
         return "—"
 
-    def download_link(self, obj):
-        # Добавляем слеш в конец URL, чтобы соответствовать настройке URL в urls.py
-        url = reverse('download_log', args=[obj.file_name])
-        if not url.endswith('/'):
-            url += '/'
-        
+    def view_link(self, obj):
+        """Кнопка для просмотра лога"""
         if obj and os.path.exists(obj.file_path()):
-            return format_html('<a href="{}" target="_blank">Скачать</a>', url)
+            url = reverse('view_log', args=[obj.file_name])
+            return format_html('<a href="{}" target="_blank" class="button" style="background-color: #4CAF50; color: white; padding: 5px 10px; text-decoration: none; border-radius: 4px; margin-right: 5px;">Просмотр</a>', url)
+        return format_html('<span style="color: gray;">Просмотр</span>')
+
+    def download_link(self, obj):
+        """Кнопка для скачивания лога"""
+        if obj and os.path.exists(obj.file_path()):
+            url = reverse('download_log', args=[obj.file_name])
+            return format_html('<a href="{}" target="_blank" class="button" style="background-color: #008CBA; color: white; padding: 5px 10px; text-decoration: none; border-radius: 4px; margin-right: 5px;">Скачать</a>', url)
         return format_html('<span style="color: gray;">Скачать</span>')
 
     def delete_button(self, obj):
-        return format_html('<a href="{}" style="color:red;">Удалить</a>', reverse('delete_log', args=[obj.pk]))
-
-    file_exists.short_description = "Статус файла"
-    file_size.short_description = "Размер файла"
-    download_link.short_description = "Скачать"
-    delete_button.short_description = "Удалить"
+        """Кнопка для удаления лога"""
+        return format_html('<a href="{}" class="button" style="background-color: #f44336; color: white; padding: 5px 10px; text-decoration: none; border-radius: 4px; margin-right: 5px;">Удалить</a>', 
+                         reverse('delete_log', args=[obj.pk]))
     
     def add_view(self, request, form_url='', extra_context=None):
         extra_context = extra_context or {}
         extra_context['title'] = 'Добавление лог-файла'
         extra_context['additional_info'] = 'При создании записи пустой файл будет создан автоматически.'
         return super().add_view(request, form_url, extra_context)
+
+    file_exists.short_description = "Статус файла"
+    file_size.short_description = "Размер файла"
+    view_link.short_description = "Просмотр"
+    download_link.short_description = "Скачать"
+    delete_button.short_description = "Удалить"
 
 @admin.register(RawJSON)
 class RawJSONAdmin(admin.ModelAdmin):
@@ -182,7 +193,7 @@ class LogFilterAdmin(admin.ModelAdmin):
         """Кнопка для экспорта отфильтрованных логов"""
         if obj and obj.is_active:
             url = reverse('export_filtered_log', args=[obj.id])
-            return format_html('<a href="{}" target="_blank" class="button">Экспортировать логи</a>', url)
+            return format_html('<a href="{}" target="_blank" class="button" style="background-color: #007bff; color: white; padding: 5px 10px; text-decoration: none; border-radius: 4px; margin-right: 5px;">Экспортировать логи</a>', url)
         return '-'
     
     def save_related(self, request, form, formsets, change):

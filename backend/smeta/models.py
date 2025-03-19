@@ -61,6 +61,12 @@ class Product(models.Model):
     def __str__(self):
         return f'{self.system} {self.series}'
 
+    def save(self, *args, **kwargs):
+        # Сохраняем объект без связей many-to-many
+        super().save(*args, **kwargs)
+        # После сохранения объекта можно устанавливать связи many-to-many
+        # Они будут установлены в сериализаторе
+
 class Additional(models.Model):
     name = models.CharField(max_length=255, verbose_name='Название')
     quantity = models.PositiveIntegerField(verbose_name='Количество')
@@ -143,10 +149,10 @@ class LogFile(models.Model):
     def save(self, *args, **kwargs):
         """При сохранении создаем файл, если он не существует"""
         is_new = self.pk is None  # Проверяем, новый ли объект
-        
+
         # Сохраняем объект в базу данных
         super().save(*args, **kwargs)
-        
+
         # Если это новая запись и файл не существует, создаем его
         if is_new:
             file_path = self.file_path()
@@ -222,16 +228,16 @@ class ScriptCode(models.Model):
         ('body_start', 'В начале body'),
         ('body_end', 'В конце body'),
     ]
-    
+
     name = models.CharField(max_length=255, verbose_name='Название')
     code = models.TextField(verbose_name='Код скрипта')
     placement = models.CharField(max_length=20, choices=PLACEMENT_CHOICES, verbose_name='Место размещения')
     is_active = models.BooleanField(default=True, verbose_name='Активен')
-    
+
     class Meta:
         verbose_name = 'Скрипт'
         verbose_name_plural = 'Скрипты'
-        
+
     def __str__(self):
         return self.name
 
@@ -241,11 +247,11 @@ class WebhookSettings(models.Model):
     url = models.URLField(verbose_name='URL вебхука')
     is_active = models.BooleanField(default=True, verbose_name='Активен')
     description = models.TextField(blank=True, null=True, verbose_name='Описание')
-    
+
     class Meta:
         verbose_name = 'Настройка вебхука'
         verbose_name_plural = 'Настройки вебхука'
-        
+
     def __str__(self):
         return self.url
 
@@ -256,11 +262,11 @@ class TemplateSettings(models.Model):
     html_template = models.TextField(verbose_name='HTML шаблон')
     css_template = models.TextField(verbose_name='CSS шаблон')
     is_active = models.BooleanField(default=True, verbose_name='Активен')
-    
+
     class Meta:
         verbose_name = 'Шаблон сметы'
         verbose_name_plural = 'Шаблоны сметы'
-        
+
     def __str__(self):
         return self.name
 
@@ -268,11 +274,11 @@ class TemplateSettings(models.Model):
 class LogSettings(models.Model):
     """Модель для настройки хранения логов"""
     retention_days = models.PositiveIntegerField(default=30, verbose_name='Срок хранения (дней)')
-    
+
     class Meta:
         verbose_name = 'Настройка логирования'
         verbose_name_plural = 'Настройки логирования'
-        
+
     def __str__(self):
         return f'Хранить логи {self.retention_days} дней'
 
@@ -282,10 +288,10 @@ class LogKeyword(models.Model):
     keyword = models.CharField(max_length=255, unique=True, verbose_name='Ключевое слово')
     description = models.TextField(blank=True, null=True, verbose_name='Описание')
     usage_count = models.PositiveIntegerField(default=0, verbose_name='Количество использований')
-    
+
     def __str__(self):
         return self.keyword
-    
+
     class Meta:
         verbose_name = 'Ключевое слово лога'
         verbose_name_plural = 'Ключевые слова логов'
@@ -311,10 +317,10 @@ class LogFilter(models.Model):
     )
     is_active = models.BooleanField(default=True, verbose_name='Активен')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')
-    
+
     def __str__(self):
         return self.name
-    
+
     class Meta:
         verbose_name = 'Фильтр логов'
         verbose_name_plural = 'Фильтры логов'

@@ -8,15 +8,18 @@ class OfficeSerializer(ModelSerializer):
         model = Office
         fields = ['name', 'address']
 
+
 class ManagerSerializer(ModelSerializer):
     class Meta:
         model = Manager
         fields = ['name', 'phone']
 
+
 class OptionSerializer(ModelSerializer):
     class Meta:
         model = Option
         fields = ['name']
+
 
 class ProductSerializer(ModelSerializer):
     options = OptionSerializer(many=True)
@@ -26,18 +29,21 @@ class ProductSerializer(ModelSerializer):
         fields = [
             'identifier', 'system', 'series', 'width', 'height',
             'base_color', 'inner_color', 'outer_color', 'handles',
-            'options', 'quantity', 'image'
+            'options', 'quantity', 'image', 'cost'
         ]
+
 
 class AdditionalSerializer(ModelSerializer):
     class Meta:
         model = Additional
         fields = ['name', 'quantity', 'cost']
 
+
 class ServiceSerializer(ModelSerializer):
     class Meta:
         model = Service
         fields = ['name', 'cost']
+
 
 class OrderSerializer(ModelSerializer):
     office = OfficeSerializer()
@@ -57,26 +63,26 @@ class OrderSerializer(ModelSerializer):
     def create(self, validated_data):
         """
         Создание нового заказа с вложенными объектами: office, manager, products, additionals, services.
-        Используются методы get_or_create для обеспечения уникальности объектов.
         """
         with transaction.atomic():
-            # Извлекаем данные для связанных объектов и удаляем их из validated_data
+            # Извлекаем данные для связанных объектов
             office_data = validated_data.pop('office')
             manager_data = validated_data.pop('manager')
             products_data = validated_data.pop('products')
             additionals_data = validated_data.pop('additionals', [])
             services_data = validated_data.pop('services', [])
 
-            office = self._create_office(office_data) # Создание объекта Office
-            manager = self._create_manager(manager_data) # Создание объекта Manager
-            order = self._create_order(office, manager, validated_data) # Создание основного объекта Order
+            # Создаем основные объекты
+            office = self._create_office(office_data)
+            manager = self._create_manager(manager_data)
+            order = self._create_order(office, manager, validated_data)
 
-            self._add_products_to_order(order, products_data) # Создание и добавление продуктов к заказу
-            self._add_additionals_to_order(order, additionals_data) # Создание и добавление дополнительных услуг к заказу
-            self._add_services_to_order(order, services_data) # Создание и добавление сервисов к заказу
+            # Добавляем связанные объекты
+            self._add_products_to_order(order, products_data)
+            self._add_additionals_to_order(order, additionals_data)
+            self._add_services_to_order(order, services_data)
 
             return order
-
 
     def _create_office(self, office_data):
         office = Office.objects.create(**office_data)
@@ -92,43 +98,40 @@ class OrderSerializer(ModelSerializer):
 
     def _add_products_to_order(self, order, products_data):
         products = []
-        # Сначала создаем все продукты
+        options_list = []
+
         for product_data in products_data:
-            options_data = product_data.pop('options')  # Извлекаем опции для продукта
-            products.append(Product(**product_data))  # Добавляем продукт в список
 
-        # Массовое создание продуктов
-        Product.objects.bulk_create(products)
+            options_data = product_data.pop('options', [])
+            options_list.append(options_data)
+            product = Product.objects.create(**product_data)
+            products.append(product)
 
-        # Теперь устанавливаем связи ManyToMany (опции)
-        for product, product_data in zip(products, products_data):
-            options_data = product_data.get('options', [])
-            self._add_options_to_product(product, options_data)  # Устанавливаем опции для продукта
 
-            # Привязываем продукт к заказу
+        for product, options_data in zip(products, options_list):
+            options = []
+            for option_data in options_data:
+                option = Option.objects.create(**option_data)
+                options.append(option)
+
+            if options:
+                product.options.set(options)
             order.products.add(product)
-
-    def _add_options_to_product(self, product, options_data):
-        options = []
-        for option_data in options_data:
-            option = Option.objects.create(**option_data)
-            options.append(option)
-        product.options.set(options)
 
     def _add_additionals_to_order(self, order, additionals_data):
         additionals = []
         for additional_data in additionals_data:
-            additional = Additional(**additional_data)
+            additional = Additional.objects.create(**additional_data)
             additionals.append(additional)
 
-        Additional.objects.bulk_create(additionals)
-        order.additionals.set(additionals)
+        for additional in additionals:
+            order.additionals.add(additional)
 
     def _add_services_to_order(self, order, services_data):
         services = []
         for service_data in services_data:
-            service = Service(**service_data)
+            service = Service.objects.create(**service_data)
             services.append(service)
 
-        Service.objects.bulk_create(services)
-        order.services.set(services)
+        for service in services:
+            order.services.add(service)

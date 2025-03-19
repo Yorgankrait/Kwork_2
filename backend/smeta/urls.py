@@ -20,8 +20,8 @@ urlpatterns = [
     path('smeta/<uuid:uuid>/', smeta_details, name='smeta-details'),
     path('api/rate-smeta/<uuid:uuid>/', rate_smeta, name='rate-smeta'),
     path('api/swagger/', schema_view.with_ui('swagger'), name='schema-swagger-ui'),
-    path('download/<str:file_name>/', download_log, name='download_log'),
-    path('delete/<int:pk>/', delete_log, name='delete_log'),
-    path('view/<str:file_name>/', view_log, name='view_log'),
-    path('export-filtered-log/<int:filter_id>/', export_filtered_log, name='export_filtered_log'),
+    path('logs/view/<str:file_name>/', view_log, name='view_log'),
+    path('logs/download/<str:file_name>/', download_log, name='download_log'),
+    path('logs/delete/<int:pk>/', delete_log, name='delete_log'),
+    path('logs/export/<int:filter_id>/', export_filtered_log, name='export_filtered_log'),
 ]

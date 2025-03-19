@@ -5,10 +5,11 @@ from uuid import UUID
 from datetime import datetime
 
 from django.shortcuts import render, get_object_or_404, redirect
-from django.http import JsonResponse, Http404, HttpResponse
+from django.http import JsonResponse, Http404, HttpResponse, FileResponse
 from django.conf import settings
 from django.template import Template, Context
 from django.urls import reverse
+from django.contrib.auth.decorators import login_required
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -243,46 +244,82 @@ def rate_smeta(request, uuid):
         return response
 
 
+@login_required
+def view_log(request, file_name):
+    """
+    Просмотр содержимого лог-файла.
+    """
+    try:
+        # Получаем информацию о файле из БД
+        log_file = get_object_or_404(LogFile, file_name=file_name)
+        
+        # Формируем полный путь к файлу
+        file_path = os.path.join(settings.LOG_DIR, file_name)
+        
+        # Проверяем существование файла
+        if not os.path.exists(file_path):
+            return render(request, 'view_log.html', {
+                'log_file': log_file,
+                'error': f"Файл лога не найден на диске: {file_path}",
+                'title': f'Ошибка: Лог не найден'
+            }, status=404)
+        
+        # Открываем файл и читаем содержимое
+        with open(file_path, 'r', encoding='utf-8') as f:
+            content = f.read()
+        
+        # Получаем размер файла и форматируем его
+        try:
+            size_bytes = os.path.getsize(file_path)
+            if size_bytes < 1024:
+                formatted_size = f"{size_bytes} байт"
+            elif size_bytes < 1024 * 1024:
+                formatted_size = f"{size_bytes / 1024:.2f} КБ"
+            else:
+                formatted_size = f"{size_bytes / (1024 * 1024):.2f} МБ"
+        except Exception as e:
+            logger.warning(f"Не удалось получить размер файла {file_path}: {str(e)}")
+            formatted_size = "Неизвестно"
+        
+        # Формируем контекст для шаблона
+        context = {
+            'log_file': log_file,
+            'content': content,
+            'title': f'Просмотр лога: {file_name}',
+            'formatted_size': formatted_size,
+        }
+        
+        # Возвращаем отрендеренный шаблон
+        return render(request, 'view_log.html', context)
+        
+    except Exception as e:
+        # В случае любой ошибки, логируем её и возвращаем сообщение пользователю
+        logger.error(f"Ошибка при просмотре лога {file_name}: {str(e)}")
+        return render(request, 'view_log.html', {
+            'error': f"Произошла ошибка при чтении лога: {str(e)}",
+            'title': 'Ошибка просмотра лога'
+        }, status=500)
+
+@login_required
 def download_log(request, file_name):
-    """Скачивание лог-файла по имени"""
-    logger.info(f"Запрос на скачивание лог-файла: {file_name}")
-    
-    # Проверяем, существует ли запись в базе данных
-    log_file = LogFile.objects.filter(file_name=file_name).first()
-    if not log_file:
-        logger.warning(f"Запрошен несуществующий лог-файл: {file_name}")
-        raise Http404(f"Файл {file_name} не найден в базе данных")
-    
-    file_path = os.path.join(settings.LOG_DIR, file_name)
-    logger.info(f"Путь к лог-файлу: {file_path}")
-    
-    if os.path.exists(file_path):
-        with open(file_path, 'rb') as f:
-            response = HttpResponse(f.read(), content_type='text/plain')
-            response['Content-Disposition'] = f'attachment; filename="{file_name}"'
-            logger.info(f"Файл {file_name} успешно отправлен пользователю")
-            return response
-    
-    logger.error(f"Файл {file_name} существует в базе, но не найден на диске")
-    raise Http404(f"Файл {file_name} не найден на диске")
+    try:
+        log_file = get_object_or_404(LogFile, file_name=file_name)
+        file_path = os.path.join(settings.LOG_DIR, file_name)
+        
+        if not os.path.exists(file_path):
+            raise Http404("Файл лога не найден")
+            
+        response = FileResponse(open(file_path, 'rb'))
+        response['Content-Disposition'] = f'attachment; filename="{file_name}"'
+        return response
+        
+    except Exception as e:
+        raise Http404(str(e))
 
 def delete_log(request, pk):
     log_file = get_object_or_404(LogFile, pk=pk)
     log_file.delete()
     return redirect('admin:smeta_logfile_changelist')
-
-
-def view_log(request, file_name):
-    log_file = get_object_or_404(LogFile, file_name=file_name)
-    file_path = log_file.file_path()
-
-    if os.path.exists(file_path):
-        with open(file_path, 'r', encoding='utf-8') as f:
-            content = f.read()
-    else:
-        content = "Файл не найден."
-
-    return render(request, 'view_log.html', {'log_file': log_file, 'content': content})
 
 def export_filtered_log(request, filter_id):
     """Экспортирует логи, отфильтрованные по заданным критериям"""
